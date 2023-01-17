@@ -21,9 +21,9 @@ class CategorySeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             Category::insert(
                 [
-                    'category_name' => $faker->word(),
-                    'created_at'    => now()->toDateTimeString(),
-                    'updated_at'    => now()->toDateTimeString(),
+                    'name'       => $faker->word(),
+                    'created_at' => now()->toDateTimeString(),
+                    'updated_at' => now()->toDateTimeString(),
                 ]
             );
         }

@@ -21,7 +21,7 @@ class Shop extends Model
         return $this->hasMany(Receive::class, 'shop_id');
     }
 
-    public function sales()
+    public function sales(): HasMany
     {
         return $this->hasMany(Shop::class, 'shop_id');
     }

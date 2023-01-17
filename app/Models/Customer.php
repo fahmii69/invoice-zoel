@@ -10,14 +10,14 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $guard = [];
+    protected $guarded = [];
 
     public function contract(): HasMany
     {
         return $this->hasMany(Contract::class, 'customer_id');
     }
 
-    public function sale()
+    public function sale(): HasMany
     {
         return $this->hasMany(Sale::class, 'customer_id');
     }

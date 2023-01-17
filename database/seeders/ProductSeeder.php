@@ -24,12 +24,11 @@ class ProductSeeder extends Seeder
         for ($i = 0; $i < 15; $i++) {
             $product = Product::create(
                 [
-                    'supplier_id' => Supplier::inRandomOrder()->first()->id,
                     'category_id' => Category::inRandomOrder()->first()->id,
                     'code'        => $faker->unique()->lexify('PDT-???????'),
                     'name'        => $faker->unique()->foodName(),
-                    'sale_price'  => $faker->numerify('###000'),
-                    'buy_price'   => $faker->numerify('###000'),
+                    'buy_price'   => $faker->numerify('#000'),
+                    'sale_price'  => $faker->numerify('##000'),
                     'created_at'  => now()->toDateTimeString(),
                     'updated_at'  => now()->toDateTimeString(),
                 ]

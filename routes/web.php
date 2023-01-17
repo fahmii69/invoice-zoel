@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +17,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard.index');
 });
+
+Route::get('/product/get', [ProductController::class, 'getProduct'])->name('product.list');
+Route::resource('product', ProductController::class);
+
+Route::get('/supplier/get', [SupplierController::class, 'getSupplier'])->name('supplier.list');
+Route::resource('supplier', SupplierController::class);
+
+Route::get('/stock/get', [StockController::class, 'getStock'])->name('stock.list');
+Route::resource('stock', StockController::class);
