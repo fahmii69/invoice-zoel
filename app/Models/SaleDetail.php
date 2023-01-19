@@ -11,6 +11,14 @@ class SaleDetail extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $append = [
+        'product_list'
+    ];
+
+    public function getProductListAttribute()
+    {
+        return $this->product?->name;
+    }
 
     public function sale(): BelongsTo
     {

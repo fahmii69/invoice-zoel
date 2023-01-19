@@ -80,13 +80,25 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group ml-2">
                                 <label>Choose image from your computer :</label>
                                 <span class="form-control @error('image') is-invalid @enderror">
                                     <i class="fa fa-folder-open"></i>&nbsp;Browse
                                     <input type="file" name="image">
                                 </span>
                                 @error('image')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label>Stock</label>
+                                <input type="number" class="input-value input-noVariant form-control @error('current_inventory') is-invalid @enderror"
+                                name="current_inventory" id="current_inventory"
+                                >
+                                @error('current_inventory')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -112,8 +124,8 @@
         allowClear: true
     });
 
-    $('#supplier_id').select2({
-        placeholder: '-- Select Supplier -- ',
+    $('#shop_id').select2({
+        placeholder: '-- Select Shop -- ',
         allowClear: true,
     });
 

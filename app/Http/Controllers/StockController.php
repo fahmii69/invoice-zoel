@@ -43,9 +43,6 @@ class StockController extends Controller
                 ->editColumn('shop_id', function ($data) {
                     return $data->shop->name;
                 })
-                ->editColumn('created_at', function ($data) {
-                    return Carbon::parse($data->created_at)->format('d-M-Y');
-                })
                 ->addColumn('action', function ($data) {
                     $route = route('stock.edit', $data->id);
                     return view('components.action-button', compact('data', 'route'));
@@ -54,56 +51,56 @@ class StockController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return View
-     */
-    public function create(): View
-    {
-        $title = 'Add Stock';
-        $action = route('stock.store');
-        $product = Product::get();
-        $shop    = Shop::get();
-        $stock = new Stock;
+    // /**
+    //  * Show the form for creating a new resource.
+    //  *
+    //  * @return View
+    //  */
+    // public function create(): View
+    // {
+    //     $title = 'Add Stock';
+    //     $action = route('stock.store');
+    //     $product = Product::get();
+    //     $shop    = Shop::get();
+    //     $stock = new Stock;
 
-        return view('master_data.stock.form', compact('title', 'action', 'product', 'shop', 'stock'));
-    }
+    //     return view('master_data.stock.form', compact('title', 'action', 'product', 'shop', 'stock'));
+    // }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  StoreStockRequest  $request
-     * @return RedirectResponse
-     */
-    public function store(StoreStockRequest $request): RedirectResponse
-    {
-        DB::beginTransaction();
+    // /**
+    //  * Store a newly created resource in storage.
+    //  *
+    //  * @param  StoreStockRequest  $request
+    //  * @return RedirectResponse
+    //  */
+    // public function store(StoreStockRequest $request): RedirectResponse
+    // {
+    //     DB::beginTransaction();
 
-        try {
-            $stock = new Stock($request->safe(
-                ['product_id', 'shop_id', 'quantity']
-            ));
+    //     try {
+    //         $stock = new Stock($request->safe(
+    //             ['product_id', 'shop_id', 'quantity']
+    //         ));
 
-            $stock->save();
-            $notification = array(
-                'message'    => 'Stock data has been Added!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
-            DB::rollBack();
-            $notification = array(
-                'message'    => $e->getMessage(),
-                'alert-type' => 'error'
-            );
+    //         $stock->save();
+    //         $notification = array(
+    //             'message'    => 'Stock data has been Added!',
+    //             'alert-type' => 'success'
+    //         );
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         $notification = array(
+    //             'message'    => $e->getMessage(),
+    //             'alert-type' => 'error'
+    //         );
 
-            return redirect()->back()->with($notification)->withInput();
-        }
-        DB::commit();
-        return redirect()
-            ->route('stock.index')
-            ->with($notification);
-    }
+    //         return redirect()->back()->with($notification)->withInput();
+    //     }
+    //     DB::commit();
+    //     return redirect()
+    //         ->route('stock.index')
+    //         ->with($notification);
+    // }
 
     /**
      * Show the form for editing the specified resource.

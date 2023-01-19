@@ -3,15 +3,18 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
+        <x-create-button route="{{route('sale.create')}}" title=Sale />
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="stock-dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="sale-dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Product Name</th>
+                            <th>Product</th>
+                            <th>Customer</th>
                             <th>Shop</th>
-                            <th>Quantity</th>
+                            <th>Sale Date</th>
+                            <th>Sale Price</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -26,10 +29,10 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function () {
-        var table = $('#stock-dataTable').DataTable({
+        var table = $('#sale-dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('stock.list') }}",
+            ajax: "{{ route('sale.list') }}",
             columns: [{
                     data      : 'DT_RowIndex',
                     name      : 'DT_RowIndex',
@@ -37,16 +40,28 @@
                     searchable: false,
                 },
                 {
-                    data: 'product_id',
-                    name: 'product_id'
+                    data: 'product_list',
+                    name: 'product_list'
+                },
+                {
+                    data: 'customer_id',
+                    name: 'customer_id'
                 },
                 {
                     data: 'shop_id',
                     name: 'shop_id'
                 },
                 {
-                    data: 'quantity',
-                    name: 'quantity'
+                    data: 'sales_date',
+                    name: 'sales_date'
+                },
+                // {
+                //     data: 'buy_price',
+                //     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
+                // },
+                {
+                    data: 'grand_total',
+                    render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
                 },
                 {
                     data: 'action',
@@ -79,7 +94,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.value) {
-                    let url = '{{ route('stock.destroy', ':id') }}';
+                    let url = '{{ route('product.destroy', ':id') }}';
                         url = url.replace(':id', id);
 
                     $.ajax({

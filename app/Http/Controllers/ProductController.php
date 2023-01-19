@@ -6,6 +6,8 @@ use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Shop;
+use App\Models\Stock;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -53,10 +55,10 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        $title  = 'Add Product';
+        $title    = 'Add Product';
         $category = Category::get();
         $action   = route('product.store');
-        $product = new Product;
+        $product  = new Product;
 
         return view('master_data.product.form', compact('title', 'category', 'action', 'product'));
     }
@@ -71,6 +73,7 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
 
+        // dd($request->all());
 
         $karakter = "ABCDEVGHIJKLMNOPQRSTUVWXYZ";
         $pin = rand(0, 9999999) . $karakter[rand(0, strlen($karakter) - 1)];
@@ -85,6 +88,14 @@ class ProductController extends Controller
 
             $product->code  = $code;
             $product->save();
+
+            for ($i = 1; $i < Shop::count() + 1; $i++) {
+                $stock             = new Stock();
+                $stock->product_id = $product->id;
+                $stock->shop_id    = $i;
+                $stock->quantity   = $request->current_inventory;
+                $stock->save();
+            }
             $notification = array(
                 'message'    => 'Product data has been Added!',
                 'alert-type' => 'success'

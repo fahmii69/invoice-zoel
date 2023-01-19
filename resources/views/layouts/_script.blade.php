@@ -8,13 +8,6 @@
 <script src="{{ asset('AdminLTE/dist/js/adminlte.js') }}"></script>
 
 <!-- PAGE PLUGINS -->
-<!-- jQuery Mapael -->
-<script src="{{ asset('AdminLTE/plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/raphael/raphael.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/jquery-mapael/jquery.mapael.min.js') }}"></script>
-<script src="{{ asset('AdminLTE/plugins/jquery-mapael/maps/usa_states.min.js') }}"></script>
-<!-- ChartJS -->
-<script src="{{ asset('AdminLTE/plugins/chart.js/Chart.min.js') }}"></script>
 <!-- DataTables -->
 <script src="{{ asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
@@ -25,6 +18,8 @@
 
 <!-- Select2-->
 <script src="{{ asset('AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
+<script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js') }}">
+</script>
 <script type="text/javascript">
     function ribuan(value){
         var 	a = value;

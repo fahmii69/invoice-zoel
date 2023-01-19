@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Shop;
+use App\Models\Stock;
 use App\Models\Supplier;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -34,13 +36,13 @@ class ProductSeeder extends Seeder
                 ]
             );
 
-            // foreach (range(1, rand(1, 3)) as $k) {
-            //     PeminjamanDetail::create([
-            //         'buku_id'       => rand(1, 25),
-            //         'peminjaman_id' => $peminjaman->id,
-            //         'status'        => $faker->randomElements(['SEDANG_DIPINJAM', 'HILANG', 'DIKEMBALIKAN'])[0],
-            //     ]);
-            // }
+            foreach (range(1, Shop::count()) as $k) {
+                Stock::create([
+                    'product_id' => $product->id,
+                    'shop_id'    => $k,
+                    'quantity'   => $faker->randomNumber(2, false),
+                ]);
+            }
         }
     }
 }

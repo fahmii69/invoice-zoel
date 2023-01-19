@@ -48,15 +48,15 @@
                 {{-- Transaction --}}
                 <li class="nav-header">Transaction</li>
                 <li class="nav-item">
-                    <a href="/" class="nav-link">
+                    <a href="{{ route('sale.index') }}" class="nav-link">
                         <i class="nav-icon fa fa-shopping-cart"></i>
                         <p>
                             Sales
-                            <span class="badge badge-info right">2</span>
+                            {{-- <span class="badge badge-info right">2</span> --}}
                         </p>
                     </a>
                 </li>
-				<li class="nav-item">
+				{{-- <li class="nav-item">
                     <a href="/" class="nav-link">
                         <i class="nav-icon fas fa-history"></i>
                         <p>
@@ -79,7 +79,7 @@
                             Cash Management
                         </p>
                     </a>
-                </li>
+                </li> --}}
                 {{-- /Transaction --}}
 
                 {{-- Master Data --}}

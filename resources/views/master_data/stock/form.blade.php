@@ -58,7 +58,7 @@
                 <div class="row">
                     <div class="col-12">
                         <input type="submit" value="Submit" class="btn btn-success float-right">
-                        <a href="{{ route('supplier.index') }}" class="btn btn-secondary float-right mr-2">Cancel</a>
+                        <a href="{{ route('stock.index') }}" class="btn btn-secondary float-right mr-2">Cancel</a>
                     </div>
             </form>
         </div>

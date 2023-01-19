@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -28,3 +29,6 @@ Route::resource('supplier', SupplierController::class);
 
 Route::get('/stock/get', [StockController::class, 'getStock'])->name('stock.list');
 Route::resource('stock', StockController::class);
+
+Route::get('/sale/get', [SaleController::class, 'getSale'])->name('sale.list');
+Route::resource('sale', SaleController::class);

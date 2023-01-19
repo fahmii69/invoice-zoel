@@ -15,7 +15,7 @@ class ShopSeeder extends Seeder
      */
     public function run()
     {
-        Shop::insert(
+        Shop::insert([
             [
                 'name'       => 'ZoelStore-1',
                 'address'    => 'Denpasar',
@@ -36,6 +36,6 @@ class ShopSeeder extends Seeder
                 'created_at' => now()->toDateTimeString(),
                 'updated_at' => now()->toDateTimeString(),
             ],
-        );
+        ]);
     }
 }
