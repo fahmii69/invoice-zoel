@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
+use App\Models\Contract;
+use App\Models\ContractDetail;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Stock;
@@ -178,5 +180,37 @@ class ProductController extends Controller
         Product::destroy($product->id);
 
         return response()->json(['success' => true, 'message' => 'Product Data has been DELETED !']);
+    }
+
+    public function getContractPrice(Request $request)
+    {
+        $response = [
+            'status' => false,
+            'data'   => [],
+        ];
+
+        try {
+            $date       = $request->date;
+            $customerId = $request->customerId;
+
+            $contract = ContractDetail::query()
+                ->select('product_id', 'price')
+                ->whereHas('contract', function ($q) use ($date, $customerId) {
+                    $q->where(function ($q) use ($date, $customerId) {
+                        $q->where('start_date', '<=', $date)->where('end_date', '>=', $date);
+                        $q->whereCustomerId($customerId);
+                    });
+                })
+                ->groupBy('product_id')
+                ->get();
+
+
+            $response['data']   = $contract;
+            $response['status'] = true;
+        } catch (Exception $e) {
+            $response['message'] = $e->getMessage();
+        }
+
+        return response()->json($response);
     }
 }

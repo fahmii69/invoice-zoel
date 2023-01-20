@@ -32,7 +32,7 @@
     <td>
         <div class="form-group" style="display:flex; flex:wrap;">
 
-            <input type="text" disabled id="sale_price" name="sale_price" class="form-control input-barang sale_price">
+            <input type="text" disabled id="sale_price" name="sale_price[]" class="form-control input-barang sale_price">
         </div>
     </td>
     <td class="text-subTotal" id="text-subTotal">

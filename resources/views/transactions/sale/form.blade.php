@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <label for="sales_date">Sales Date</label>
                         <input type="date" name="sales_date" id="sales_date"
-                            class="form-control @error('sales_date') is-invalid @enderror"
+                            class="sales_date form-control @error('sales_date') is-invalid @enderror"
                             value="{{ old('sales_date') }}">
                         @error('sales_date')
                         <div class="invalid-feedback">
@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="shop_id">Shop</label>
-                        <select name="shop_id" id="shop_id" class="form-control @error('shop_id') is-invalid @enderror">
+                        <select name="shop_id" id="shop_id" class="form-control shop_id @error('shop_id') is-invalid @enderror">
                             @foreach ($shop as $item)
                             <option></option>
                             <option value="{{$item->id}}" {{-- @selected($shop->shop_id == $item->id) --}}>
@@ -42,10 +42,10 @@
                     <div class="col-md-4">
                         <label for="customer_id">Customer</label>
                         <select name="customer_id" id="customer_id"
-                            class="form-control @error('customer_id') is-invalid @enderror">
+                            class="customer_id form-control @error('customer_id') is-invalid @enderror">
                             @foreach ($customer as $item)
                             <option></option>
-                            <option value="{{$item->id}}" {{-- @selected($stock->customer_id == $item->id) --}}>
+                            <option value="{{$item->id}}" data-custId="{{ $item->id }}" {{-- @selected($stock->customer_id == $item->id) --}}>
                                 {{ $item->name }}
                             </option>
                             @endforeach
@@ -70,16 +70,20 @@
                             <th style="width: 5%"></th>
                         </thead>
                         <tbody id="product-column">
-                            {{-- <x-add-sale-product :product=$product/> --}}
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td colspan="2" style="border-top:0px;">
+                                    <a class="text-success add-attribute pointer"><i class="fas fa-plus-square"></i> Add another product</a>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td colspan="6">
                                     <div class="float-right">
-                                        <h6  class="grand-total" style="font-weight:bold;"> Grand Total.</h6>
+                                        <span class="grand-total" style="font-weight:bold;"> Grand Total.</span>
                                         <input type="text"
-                                        class="form-control grand-total"
-                                        name="product_price"  id="total" value="">
+                                        class="form-control grand_total"
+                                        name="grand-total" id="total" value="">
                                     </div>
                                 </td>
                             </tr>
@@ -100,6 +104,9 @@
 @endsection
 @push('js')
 <script>
+    var contractProducts = [];
+    loopAddProduct();
+
     $('#shop_id').select2({
         placeholder: '-- Select Shop --',
         allowClear: true
@@ -107,7 +114,7 @@
 
     $('.product_list').select2({
         placeholder: '-- Select Product --',
-        // allowClear: true
+        allowClear: true
     });
 
     $('#customer_id').select2({
@@ -129,14 +136,35 @@
         }
     })
 
-    loopAddProduct();
-    $(document).on('change','.product_list', function(){
+    $(document).on('click','.add-attribute', function(){
+        loopAddProduct();
+    });
+
+    $(document).on('change','.customer_id', function(){
+        loopContractPrice();
+    });
+
+    $(document).on('change','.sales_date',function(){
+        loopContractPrice();
+    });
+
+    $(document).on('change','.product_list', async function(){
         // isModifier=$(this).val()
         let container = $(this).closest('tr');
         let quantity  = container.find('.quantity').val();
         let salePrice = $(this).find(':selected').attr('data-salePrice')
             salePrice = parseFloat(salePrice)
+        let productId = $(this).val();
 
+        contractProducts = await getContractPrice();
+
+        let index = contractProducts.findIndex(x => x.product_id == productId);
+
+        if(index > -1){
+            salePrice = contractProducts[index].price;
+            container.find('.sale_price').val(salePrice);
+        }
+            
         changePrice(quantity, salePrice, container);
         
         $(this).closest('tr').find('.sale_price').val(salePrice);
@@ -149,22 +177,8 @@
             'placeholder'   : '0.00'
         });
         
-        console.log(salePrice);
     });
 
-    function loopAddProduct(){
-        html = `{!! $addProduct !!}`;
-            $('#product-column').append(html);
-    
-            $('.product_list').select2({
-                placeholder: '-- Select Product --',
-                allowClear : true
-            });
-
-            // $('#product_list'+i+'').val('').trigger('change');
-            $('.product_list').last().focus();
-            // }
-    }
     $(document).on('keydown', '.input-text', function(event){
         if(event.keyCode == 13){
             loopAddProduct();
@@ -172,6 +186,7 @@
     });
     $(document).on('click', '.delete-product', function () {
             $(this).closest('.add-product').remove();
+            loopContractPrice();
         })
 
     $(document).on('select2:open', () => {
@@ -197,101 +212,115 @@
         }
     });
 
+    function loopAddProduct(){
+        html = `{!! $addProduct !!}`;
+            $('#product-column').append(html);
+    
+            $('.product_list').select2({
+                placeholder: '-- Select Product --',
+                allowClear : true
+            });
+
+            $('.product_list').last().focus();
+    }
+
+    var loopContractPrice = async function(){
+
+        var product_row = document.getElementsByClassName('add-product');
+        for (var i = 0; i < product_row.length; ++i) {
+            var item      = product_row[i];
+            var container = $(item).children();
+            let productId = container.find('.product_list').val()
+            let quantity = container.find('.quantity').val()
+            let salePrice = container.find('.sale_price').val()
+            salePrice = parseFloat(salePrice.replace(/,/gi, '') || 0)
+
+            console.log(salePrice);
+            contractProducts = await getContractPrice();
+            
+            let index = contractProducts.findIndex(x => x.product_id == productId);
+            if(index > -1){
+                salePrice = contractProducts[index].price;
+                container.find('.sale_price').val(salePrice);
+                closestTr = container.find('.product_list').closest('tr');
+                changePrice(quantity, salePrice, closestTr); 
+            } else {
+                let salePrice = container.find('.product_list').find(':selected').attr('data-salePrice')
+                salePrice = parseFloat(salePrice)
+                console.log('false', salePrice,)
+                container.find('.sale_price').val(salePrice);
+                closestTr = container.find('.product_list').closest('tr');
+                changePrice(quantity, salePrice, closestTr); 
+            }
+            console.log(contractProducts);
+
+            console.log(productId,  quantity,salePrice)
+        }
+
+    }
+
+    var getContractPrice = async function(){
+        let customerId = $('#customer_id').val();
+        let date       = $('#sales_date').val();
+
+        let result = await fetch("{{ route('product.getContractPrice') }}", {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF-Token": "{{ csrf_token() }}"
+            },
+            method: "post",
+            body: JSON.stringify({
+                customerId: customerId,
+                date: date    
+            }),
+        }).then(function(response){
+            return response.json()
+        })
+
+        return result.data;
+    }
+
     function changePrice(quantity, price, container){
         result = quantity * price;
+
+        console.log(quantity, price, container)
 
         container.find('.text-subTotal').html(`
         <div class="form-group mt-2" style="display:flex; flex:wrap;">
             ` + ribuan(result) + `
             </div>
-            `);
+        `);
 
-    grandTotalPrice(quantity, price, result);
+        grandTotalPrice();
     }
-        
-    function grandTotalPrice(quantity,price,result) {
-    
-        var cusid_ele = document.getElementsByClassName('add-product');
-        console.log(cusid_ele);
-        for (var i = 0; i < cusid_ele.length; ++i) {
-            var item      = cusid_ele[i];
+
+    function grandTotalPrice() {
+        sum = 0;
+        var product_row = document.getElementsByClassName('add-product');
+        for (var i = 0; i < product_row.length; ++i) {
+            var item      = product_row[i];
             var container = $(item).children();
             let quantity = container.find('.quantity').val()
             let salePrice = container.find('.sale_price').val()
             salePrice = parseFloat(salePrice.replace(/,/gi, '') || 0)
-            // let salePrice = 
-            // var quantity  = container.find('.quantity').val();
-            // item.innerHTML = 'this is value';
-            console.log(salePrice);
-            
-            }
+            rowResult = quantity * salePrice;
 
-        // sum = $result
-        // $('.addProduct').each(function(){
-        //     $(this).find('td').each(function(){
-        //         console.log(quantity);
-        //     })
-        // })
-        // let passingItem=$('#accordionExample').find('.addProduct');
-        // $('.add-product').each(function(index,value) { 
-                // salePrice = parseFloat(salePrice)    
-                
-                // $(this).closest('tr').find('.grand_t').val(salePrice);
-                
-                // console.log(123);
-        // document.getElementById('total').value = result;
+            sum+= rowResult;
+        }
 
-        // console.log(quantity,price,result);
-        // });
+        $('.grand_total').inputmask({
+            'alias'             : 'decimal',
+            'prefix'            : 'Rp. ',
+            'groupSeparator'    : ',',
+            'autoGroup'         : true,
+            'digits'            : 2,
+            'digitsOptional'    : false,
+            'removeMaskOnSubmit': true,
+        });
 
+        document.getElementById('total').value = sum;
     }
-
-    // var dataPassingItem=[];
-    //     var dataPassingModifier=[];
-    //     $.each(passingItem, function(index,value){
-    //         ItemName=$(this).find('.name').val();
-    //         HargaTotal=$(this).find('.hargaAttr').attr('data-price');
-    //         hargaAsli=$(this).find('.hargaAttr').attr('data-hargaAsli');
-    //         Qty=$(this).find('.changeQty').val();
-    //         listSales=$(this).find('.listSales').val();
-    //         notes=$(this).find('.notes').val();
-
-    //         dataPassingItem.push({
-    //             'ItemName':ItemName, 
-    //             'HargaTotal':HargaTotal, 
-    //             'Qty':Qty, 
-    //             'listSales':listSales, 
-    //             'notes':notes, 
-    //             'hargaAsli':hargaAsli, 
-    //         });
-    //     });
-
-    //     function changeTotalPrice(){
-    //     listitem=$('.add-product');
-    //     subtotal=0;
-    //     total=0;
-
-    //     if(listitem.length>0){
-    //         $.each(listitem,function(index,value){
-    //             hargabarang=$(this).find('.hargaAttr').attr('data-price');
-    //             subtotal=subtotal+parseInt(hargabarang);
-    //             total=subtotal;
-    //         });  
-    //     }else{
-    //         subtotal=0;
-    //         total=0;
-    //     }        
-
-    //     if(diskonType==1){
-    //         total=parseInt(subtotal)-parseInt(diskonValue);
-    //         diskon=diskonValue;
-
-    //     }else{
-    //         diskon=parseInt((subtotal*diskonValue)/100);
-    //         total=parseInt(subtotal)-parseInt(diskon);
-    //     }
-    //     document.getElementById('total').innerHTML=ribuan(total);
-
-    // }
 </script>
 @endpush

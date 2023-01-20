@@ -21,6 +21,7 @@ Route::get('/', function () {
     return view('dashboard.index');
 });
 
+Route::post('/product/get/contract/price', [ProductController::class, 'getContractPrice'])->name('product.getContractPrice');
 Route::get('/product/get', [ProductController::class, 'getProduct'])->name('product.list');
 Route::resource('product', ProductController::class);
 
