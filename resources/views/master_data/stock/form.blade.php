@@ -27,23 +27,6 @@
                     @enderror
                 </div>
                 <div class="form-group">
-                    <label for="shop_id">Shop</label>
-                    <select name="shop_id" id="shop_id"
-                        class="form-control @error('shop_id') is-invalid @enderror">
-                        @foreach ($shop as $item)
-                        <option></option>
-                        <option value="{{$item->id}}" @selected($stock->shop_id == $item->id)>
-                            {{ $item->name }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('shop_id')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                    @enderror
-                </div>
-                <div class="form-group">
                     <label for="quantity">Quantity</label>
 
                     <input type="number" value="{{ old('quantity') ?? $stock->quantity }}"
@@ -71,11 +54,6 @@
     $('#product_id').select2({
         placeholder: '-- Select Product --',
         allowClear: true
-    });
-
-    $('#shop_id').select2({
-        placeholder: '-- Select Shop -- ',
-        allowClear: true,
     });
 
     $.ajaxSetup({

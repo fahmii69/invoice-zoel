@@ -9,6 +9,7 @@
             @method('put')
             @endif
             <div class="container">
+                <br>
                 <strong>General</strong>
                 <div class="row">
                     <div class="col-md-4">
@@ -122,11 +123,6 @@
     $('#category_id').select2({
         placeholder: '-- Select Category --',
         allowClear: true
-    });
-
-    $('#shop_id').select2({
-        placeholder: '-- Select Shop -- ',
-        allowClear: true,
     });
 
     $.ajaxSetup({

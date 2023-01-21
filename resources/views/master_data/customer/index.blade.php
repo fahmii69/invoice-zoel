@@ -3,14 +3,16 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
+        <x-create-button route="{{ route('customer.create') }}" title=Customer />
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="stock-dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="customer-dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
+                            <th>#</th>
+                            <th>Customer Name</th>
+                            <th>Customer Address</th>
+                            <th>Customer Phone</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -25,23 +27,27 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function () {
-        var table = $('#stock-dataTable').DataTable({
+        var table = $('#customer-dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('stock.list') }}",
+            ajax: "{{ route('customer.list') }}",
             columns: [{
-                    data      : 'DT_RowIndex',
-                    name      : 'DT_RowIndex',
-                    orderable : false,
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
                     searchable: false,
                 },
                 {
-                    data: 'product_id',
-                    name: 'product_id'
+                    data: 'name',
+                    name: 'name',
                 },
                 {
-                    data: 'quantity',
-                    name: 'quantity'
+                    data: 'address',
+                    name: 'address',
+                },
+                {
+                    data: 'phone',
+                    name: 'phone',
                 },
                 {
                     data: 'action',
@@ -74,7 +80,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.value) {
-                    let url = '{{ route('stock.destroy', ':id') }}';
+                    let url = '{{ route('customer.destroy', ':id') }}';
                         url = url.replace(':id', id);
 
                     $.ajax({
@@ -84,16 +90,16 @@
                             _token: '{{ csrf_token() }}',
                         },
                         success: function(response){
-                            
+
                             Toast.fire({
-                                icon: 'success',
-                                title: response.message
-                            });
+                                    icon: 'success',
+                                    title: response.message
+                                });
                             table.ajax.reload();
                         },
                         error: function(e){
                             Toast.fire({
-                                icon: 'error',
+                                // icon: 'error',
                                 title: e.responseJSON.message
                             });
                         }
@@ -102,5 +108,6 @@
             })
         })
     });
+
 </script>
 @endpush

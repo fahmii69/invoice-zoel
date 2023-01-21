@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id');
             $table->foreignId('customer_id');
             $table->date('sales_date');
             $table->decimal('sub_total', 0, 0);

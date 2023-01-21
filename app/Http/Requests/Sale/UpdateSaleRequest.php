@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Stock;
+namespace App\Http\Requests\Sale;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateStockRequest extends FormRequest
+class UpdateSaleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -21,11 +21,13 @@ class UpdateStockRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'product_id' => 'required',
-            'quantity'   => 'required',
+            'customer_id' => 'required',
+            'sales_date'  => 'required',
+            'sub_total'   => 'required',
+            'notes'       => 'nullable',
         ];
     }
 
@@ -37,8 +39,8 @@ class UpdateStockRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'product_id.required' => 'Product must be selected.',
-            'quantity.required'   => 'Stock Quantity must be filled in.',
+            'sales_date.required'  => ' Sales Date must be filled in.',
+            'customer_id.required' => ' Customer must be filled in.',
         ];
     }
 }

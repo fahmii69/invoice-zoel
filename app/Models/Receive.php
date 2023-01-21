@@ -13,11 +13,6 @@ class Receive extends Model
 
     protected $guarded = [];
 
-    public function shop(): BelongsTo
-    {
-        return $this->belongsTo(Shop::class);
-    }
-
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);

@@ -20,11 +20,6 @@ class Stock extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function shop(): BelongsTo
-    {
-        return $this->belongsTo(Shop::class, 'shop_id');
-    }
-
     public function receiveDetail(): HasMany
     {
         return $this->hasMany(ReceiveDetail::class, 'quantity');

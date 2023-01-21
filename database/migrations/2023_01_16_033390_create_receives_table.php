@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('receives', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id');
             $table->foreignId('supplier_id');
             $table->date('receive_date');
             $table->string('notes');

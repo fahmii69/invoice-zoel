@@ -27,7 +27,6 @@ class SaleSeeder extends Seeder
         for ($i = 0; $i < 15; $i++) {
             $sale = Sale::create(
                 [
-                    'shop_id'     => Shop::inRandomOrder()->first()->id,
                     'customer_id' => Customer::inRandomOrder()->first()->id,
                     'sales_date'  => Carbon::today()->subDays(rand(0, 30)),
                     'sub_total'   => $faker->numerify('###000'),

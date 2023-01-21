@@ -13,11 +13,6 @@ class Adjustment extends Model
 
     protected $guarded = [];
 
-    public function shop(): BelongsTo
-    {
-        return $this->belongsTo(Shop::class, 'shop_id');
-    }
-
     public function adjustmentDetail(): HasMany
     {
         return $this->hasMany(AdjustmentDetail::class, 'adjustment_id');

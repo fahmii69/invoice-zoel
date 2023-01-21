@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\Stock;
-use App\Models\Supplier;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -35,14 +34,10 @@ class ProductSeeder extends Seeder
                     'updated_at'  => now()->toDateTimeString(),
                 ]
             );
-
-            foreach (range(1, Shop::count()) as $k) {
-                Stock::create([
-                    'product_id' => $product->id,
-                    'shop_id'    => $k,
-                    'quantity'   => $faker->randomNumber(2, false),
-                ]);
-            }
+            Stock::create([
+                'product_id' => $product->id,
+                'quantity'   => $faker->randomNumber(2, false),
+            ]);
         }
     }
 }

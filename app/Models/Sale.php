@@ -13,11 +13,6 @@ class Sale extends Model
 
     protected $guarded = [];
 
-    public function shop(): BelongsTo
-    {
-        return $this->belongsTo(Shop::class, 'shop_id');
-    }
-
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');

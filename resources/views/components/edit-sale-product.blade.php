@@ -6,7 +6,7 @@
                 <option></option>
                 <option value="{{$item->id}}" 
                 
-                    {{-- @selected($getSale->product_id == $item->id) --}}
+                    @selected($getSale->product_id == $item->id)
                 data-salePrice="{{ $item->sale_price }}">{{$item->name}}</option>
                 @endforeach
             </select>
@@ -21,11 +21,11 @@
         <div class="form-group" style="display:flex; flex:wrap;">
             <input type="number" id="quantity" name="quantity[]" class="form-control input-barang input-text quantity"
                 
-            {{-- @if($sale->id)
+            @if($sale->id)
                 value = "{{ $getSale->quantity }}"
-            @else --}}
+            @else
                 value="0"
-            {{-- @endif --}}
+            @endif
                 >
         </div>
     </td>
@@ -34,18 +34,23 @@
         <div class="form-group" style="display:flex; flex:wrap;">
 
             <input type="text" readonly id="sale_price" name="sale_price[]" class="form-control input-barang sale_price"
-            {{-- @if($sale->id)
+            @if($sale->id)
             value = "{{ $getSale->price }}"
-            @else --}}
+            @else
                 value="0"
-            {{-- @endif --}}
+            @endif
             >
         </div>
     </td>
     <td class="text-saleTotal" id="text-saleTotal">
         <div class="form-group mt-2" style="display:flex; flex:wrap;">
         {{-- <span class="form-group"> --}}
-            Rp.0
+            
+            @if($sale->id)
+            Rp. {{ $getSale->total }}
+            @else
+                Rp.0
+            @endif
         {{-- </span> --}}
         </div>
     </td>

@@ -25,7 +25,6 @@ class StoreStockRequest extends FormRequest
     {
         return [
             'product_id' => 'required',
-            'shop_id'    => 'required',
             'quantity'   => 'required',
         ];
     }
@@ -39,7 +38,6 @@ class StoreStockRequest extends FormRequest
     {
         return [
             'product_id.required' => 'Product must be selected.',
-            'shop_id.required'    => 'Product must be selected.',
             'quantity.required'   => 'Stock Quantity must be filled in.',
         ];
     }

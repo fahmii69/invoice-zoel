@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Supplier;
+namespace App\Http\Requests\Customer;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSupplierRequest extends FormRequest
+class StoreCustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,6 @@ class StoreSupplierRequest extends FormRequest
             'name'    => 'required', 'string',
             'address' => 'required',
             'phone'   => 'required',
-            'pic'   => 'required',
         ];
     }
 
@@ -39,10 +38,9 @@ class StoreSupplierRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required'    => 'Supplier Name must be filled in.',
-            'address.required' => 'Supplier Address must be filled in.',
-            'phone.required'   => 'Supplier Phone Number must be filled in.',
-            'pic.required'     => 'Supplier Person in Charge must be filled in.',
+            'name.required'    => 'Customer Name must be filled in.',
+            'address.required' => 'Customer Address must be filled in.',
+            'phone.required'   => 'Customer Phone Number must be filled in.',
         ];
     }
 }

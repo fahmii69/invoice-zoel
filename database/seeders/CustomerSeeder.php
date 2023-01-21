@@ -18,7 +18,7 @@ class CustomerSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 5; $i++) {
 
             Customer::insert(
                 [

@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Stock\StoreStockRequest;
 use App\Http\Requests\Stock\UpdateStockRequest;
 use App\Models\Product;
-use App\Models\Shop;
 use App\Models\Stock;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -40,9 +38,6 @@ class StockController extends Controller
                 ->editColumn('product_id', function ($data) {
                     return $data->product->name;
                 })
-                ->editColumn('shop_id', function ($data) {
-                    return $data->shop->name;
-                })
                 ->addColumn('action', function ($data) {
                     $route = route('stock.edit', $data->id);
                     return view('components.action-button', compact('data', 'route'));
@@ -61,10 +56,10 @@ class StockController extends Controller
     //     $title = 'Add Stock';
     //     $action = route('stock.store');
     //     $product = Product::get();
-    //     $shop    = Shop::get();
+
     //     $stock = new Stock;
 
-    //     return view('master_data.stock.form', compact('title', 'action', 'product', 'shop', 'stock'));
+    //     return view('master_data.stock.form', compact('title', 'action', 'product', 'stock'));
     // }
 
     // /**
@@ -79,7 +74,7 @@ class StockController extends Controller
 
     //     try {
     //         $stock = new Stock($request->safe(
-    //             ['product_id', 'shop_id', 'quantity']
+    //             ['product_id', 'quantity']
     //         ));
 
     //         $stock->save();
@@ -113,9 +108,8 @@ class StockController extends Controller
         $title = 'Edit Stock';
         $action = route('stock.update', $stock->id);
         $product = Product::get();
-        $shop    = Shop::get();
 
-        return view('master_data.stock.form', compact('title', 'action', 'product', 'shop', 'stock'));
+        return view('master_data.stock.form', compact('title', 'action', 'product', 'stock'));
     }
 
     /**
@@ -131,7 +125,7 @@ class StockController extends Controller
 
         try {
             $stock->fill($request->safe(
-                ['product_id', 'shop_id', 'quantity']
+                ['product_id', 'quantity']
             ));
 
             $stock->save();

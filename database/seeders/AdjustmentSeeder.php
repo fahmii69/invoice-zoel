@@ -24,7 +24,6 @@ class AdjustmentSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             Adjustment::create(
                 [
-                    'shop_id'         => Shop::inRandomOrder()->first()->id,
                     'supplier_id'     => Supplier::inRandomOrder()->first()->id,
                     'adjustment_date' => Carbon::today()->subDays(rand(0, 30)),
                     'created_at'      => now()->toDateTimeString(),

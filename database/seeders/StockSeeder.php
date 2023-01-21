@@ -24,7 +24,6 @@ class StockSeeder extends Seeder
             Stock::create(
                 [
                     'product_id' => Product::inRandomOrder()->first()->id,
-                    'shop_id'    => Shop::inRandomOrder()->first()->id,
                     'quantity'   => $faker->randomNumber(2, false),
                     'created_at' => now()->toDateTimeString(),
                     'updated_at' => now()->toDateTimeString(),

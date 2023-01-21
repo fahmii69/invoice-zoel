@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('adjustments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shop_id');
             $table->date('adjustment_date');
             $table->string('notes');
             $table->string('status')->default('DISAPPROVED');

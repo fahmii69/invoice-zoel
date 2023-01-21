@@ -12,7 +12,6 @@
                             <th>No</th>
                             <th>Product</th>
                             <th>Customer</th>
-                            <th>Shop</th>
                             <th>Sale Date</th>
                             <th>Sale Price</th>
                             <th>Action</th>
@@ -48,17 +47,9 @@
                     name: 'customer_id'
                 },
                 {
-                    data: 'shop_id',
-                    name: 'shop_id'
-                },
-                {
                     data: 'sales_date',
                     name: 'sales_date'
                 },
-                // {
-                //     data: 'buy_price',
-                //     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
-                // },
                 {
                     data: 'grand_total',
                     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
@@ -94,7 +85,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.value) {
-                    let url = '{{ route('product.destroy', ':id') }}';
+                    let url = '{{ route('sale.destroy', ':id') }}';
                         url = url.replace(':id', id);
 
                     $.ajax({

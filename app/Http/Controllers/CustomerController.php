@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Supplier\StoreSupplierRequest;
-use App\Http\Requests\Supplier\UpdateSupplierRequest;
-use App\Models\Supplier;
+use App\Http\Requests\Customer\StoreCustomerRequest;
+use App\Http\Requests\Customer\UpdateCustomerRequest;
+use App\Models\Customer;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class SupplierController extends Controller
+class CustomerController extends Controller
 {
     /**
      * Constructor
      */
     public function __construct(
-        protected string $title = "Supplier",
-        protected string $route = "supplier.",
-        protected string $routeView = "master_data.supplier.",
+        protected string $title = "Customer",
+        protected string $route = "customer.",
+        protected string $routeView = "master_data.customer.",
     ) {
     }
 
@@ -37,14 +37,14 @@ class SupplierController extends Controller
         ]);
     }
 
-    public function getSupplier(Request $request)
+    public function getCustomer(Request $request)
     {
         if ($request->ajax()) {
-            $data = Supplier::latest('id');
+            $data = Customer::latest('id');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $route = route('supplier.edit', $data->id);
+                    $route = route('customer.edit', $data->id);
                     return view('components.action-button', compact('data', 'route'));
                 })
                 ->make(true);
@@ -60,7 +60,7 @@ class SupplierController extends Controller
     {
         return view($this->routeView . "form", [
             'title'    => "Add {$this->title}",
-            'supplier' => new Supplier(),
+            'customer' => new Customer(),
             'action'   => route($this->route . 'store')
         ]);
     }
@@ -68,22 +68,22 @@ class SupplierController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreSupplierRequest $request
+     * @param  StoreCustomerRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreSupplierRequest $request): RedirectResponse
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
         DB::beginTransaction();
 
         try {
-            $supplier = new Supplier($request->safe(
-                ['name', 'address', 'phone', 'pic']
+            $customer = new Customer($request->safe(
+                ['name', 'address', 'phone',]
             ));
 
-            $supplier->save();
+            $customer->save();
 
             $notification = array(
-                'message'    => 'Supplier data has been added!',
+                'message'    => 'Customer data has been added!',
                 'alert-type' => 'success'
             );
         } catch (Exception $e) {
@@ -104,37 +104,37 @@ class SupplierController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Supplier $supplier
+     * @param  Customer $customer
      * @return View
      */
-    public function edit(Supplier $supplier): View
+    public function edit(Customer $customer): View
     {
         return view($this->routeView . "form", [
-            'title'          => "Edit {$this->title}",
-            'supplier' => $supplier,
-            'action'   => route($this->route . 'update', $supplier)
+            'title'    => "Edit {$this->title}",
+            'customer' => $customer,
+            'action'   => route($this->route . 'update', $customer)
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateSupplierRequest $request
-     * @param  Supplier $supplier
+     * @param  UpdateCustomerRequest $request
+     * @param  Customer $customer
      * @return RedirectResponse
      */
-    public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
+    public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            $supplier->fill($request->safe(
-                ['name', 'address', 'phone', 'pic']
+            $customer->fill($request->safe(
+                ['name', 'address', 'phone',]
             ));
 
-            $supplier->update();
+            $customer->update();
 
             $notification = array(
-                'message'    => 'Supplier data has been updated!',
+                'message'    => 'Customer data has been updated!',
                 'alert-type' => 'success'
             );
         } catch (Exception $e) {
@@ -155,13 +155,13 @@ class SupplierController extends Controller
     /**
      * Delete data.
      *
-     * @param Supplier $supplier
+     * @param Customer $customer
      * @return JsonResponse
      */
-    public function destroy(Supplier $supplier): JsonResponse
+    public function destroy(Customer $customer): JsonResponse
     {
-        Supplier::destroy($supplier->id);
+        Customer::destroy($customer->id);
 
-        return response()->json(['success' => true, 'message' => 'Supplier Data has been DELETED !']);
+        return response()->json(['success' => true, 'message' => 'Customer Data has been DELETED !']);
     }
 }

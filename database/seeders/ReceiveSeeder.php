@@ -25,7 +25,6 @@ class ReceiveSeeder extends Seeder
         for ($i = 0; $i < 5; $i++) {
             $receive = Receive::create(
                 [
-                    'shop_id'      => Shop::inRandomOrder()->first()->id,
                     'supplier_id'  => Supplier::inRandomOrder()->first()->id,
                     'receive_date' => Carbon::today()->subDays(rand(0, 30)),
                     'notes'        => $faker->sentence(2),
