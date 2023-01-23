@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\View as FacadesView;
 use Yajra\DataTables\DataTables;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 
-class SaleController extends Controller
+class SaleController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -50,7 +52,7 @@ class SaleController extends Controller
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('sale.edit', $data->id);
-                    return view('components.action-button', compact('data', 'route'));
+                    return view('components.sale-action-button', compact('data', 'route'));
                 })
                 ->make(true);
         }
@@ -68,28 +70,34 @@ class SaleController extends Controller
         $sale     = new Sale;
         $customer = Customer::get();
         $product  = Product::get();
+        $editProduct = "";
 
         // $getSale = $sale->salesDetail;
         $addProduct = FacadesView::make('components.add-sale-product', compact('sale', 'product'));
-        return view('transactions.sale.create', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct'));
+        return view('transactions.sale.form', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct', 'editProduct'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreSaleRequest  $request
+     * @return RedirectResponse
      */
-    public function store(StoreSaleRequest $request)
+    public function store(StoreSaleRequest $request): RedirectResponse
     {
         DB::beginTransaction();
 
+        $karakter = "ABCDEVGHIJKLMNOPQRSTUVWXYZ";
+        $pin = rand(0, 9999999) . $karakter[rand(0, strlen($karakter) - 1)];
+        $string = str_shuffle($pin);
+        $code = "SL-" . $string;
         try {
 
             $sale = new Sale($request->safe(
                 ['sales_date', 'customer_id', 'sub_total',]
             ));
 
+            $sale->code  = $code;
             $sale->grand_total  = $request->sub_total + $request->tax;
             $sale->save();
 
@@ -125,23 +133,12 @@ class SaleController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Sale $sale
+     * @return View
      */
-    public function edit(Sale $sale)
+    public function edit(Sale $sale): View
     {
         $title    = 'Edit Sale';
         $action   = route('sale.update', $sale->id);
@@ -153,20 +150,20 @@ class SaleController extends Controller
             $editProduct .= FacadesView::make('components.edit-sale-product', compact('sale', 'getSale', 'product'));
         }
 
-
-        return view('transactions.sale.edit', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct', 'editProduct'));
+        return view('transactions.sale.form', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct', 'editProduct'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  UpdateSaleRequest $request
+     * @param  Sale $sale
+     * @return RedirectResponse
      */
-    public function update(UpdateSaleRequest $request, Sale $sale)
+    public function update(UpdateSaleRequest $request, Sale $sale): RedirectResponse
     {
         DB::beginTransaction();
+
 
         try {
 
@@ -174,8 +171,9 @@ class SaleController extends Controller
                 ['sales_date', 'customer_id', 'sub_total',]
             ));
 
+
             $sale->grand_total  = $request->sub_total + $request->tax;
-            $sale->save();
+            $sale->update();
 
             SaleDetail::where('sales_id', $sale->id)->delete();
             for ($i = 0; $i < count($request->product_list); $i++) {
@@ -222,7 +220,13 @@ class SaleController extends Controller
         return response()->json(['success' => true, 'message' => 'Sale Data has been DELETED !']);
     }
 
-    public function getContractPrice(Request $request)
+    /**
+     * get Contract Price.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getContractPrice(Request $request): JsonResponse
     {
         $response = [
             'status' => false,
@@ -252,5 +256,21 @@ class SaleController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * export data to pdf.
+     *
+     * @param Sale $sale
+     * @return void
+     */
+    public function pdf(Sale $sale)
+    {
+        $id       = $sale->id;
+        $customer = $sale->customer->name;
+        $date     = $sale->sales_date;
+
+        $pdf = Pdf::loadView('transactions.sale.receipt', compact('sale'));
+        return $pdf->stream("invoice $id $customer $date.pdf");
     }
 }

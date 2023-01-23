@@ -59,7 +59,7 @@
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '10%'
+                    width: '15%'
                 },
             ]
         });

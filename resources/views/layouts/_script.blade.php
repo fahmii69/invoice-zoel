@@ -12,14 +12,18 @@
 <script src="{{ asset('AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 
-<!-- SweetAlert2-->
+<!-- SweetAlert2 -->
 <script src="{{ asset('AdminLTE/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
 <script src="{{ asset('AdminLTE/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
 
-<!-- Select2-->
+<!-- Select2 -->
 <script src="{{ asset('AdminLTE/plugins/select2/js/select2.min.js') }}"></script>
 <script src="{{ url('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js') }}">
 </script>
+
+<!-- DatetimeRangePicker -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
     function ribuan(value){
         var 	a = value;

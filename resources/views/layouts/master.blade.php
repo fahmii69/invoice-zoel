@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{  asset('AdminLTE/plugins/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{  asset('AdminLTE/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 </head>
 
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">

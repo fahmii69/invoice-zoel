@@ -9,7 +9,7 @@
                 <table class="table table-bordered" id="category-dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Category Code</th>
+                            <th>No</th>
                             <th>Category Name</th>
                             <th>Action</th>
                         </tr>
@@ -30,14 +30,14 @@
             serverSide: true,
             ajax: "{{ route('category.list') }}",
             columns: [{
-                    data: 'category_code',
-                    name: 'category_code',
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
                     orderable: false,
                     searchable: false,
                 },
                 {
-                    data: 'category_name',
-                    name: 'category_name',
+                    data: 'name',
+                    name: 'name',
                 },
                 {
                     data: 'action',

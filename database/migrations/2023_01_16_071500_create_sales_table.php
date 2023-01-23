@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id');
             $table->date('sales_date');
+            $table->string('code');
             $table->decimal('sub_total', 0, 0);
             $table->decimal('tax', 0, 0)->default(0);
             $table->decimal('grand_total', 0, 0);

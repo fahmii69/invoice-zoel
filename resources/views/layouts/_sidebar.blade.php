@@ -111,6 +111,20 @@
                         <p>Customer</p>
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('contract.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>Contract</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('category.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>Category</p>
+                    </a>
+                </li>
 				{{-- /Master Data --}}
 
 				{{-- Utilites --}}

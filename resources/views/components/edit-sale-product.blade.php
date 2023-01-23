@@ -19,7 +19,7 @@
     </td>
     <td>
         <div class="form-group" style="display:flex; flex:wrap;">
-            <input type="number" id="quantity" name="quantity[]" class="form-control input-barang input-text quantity"
+            <input type="number" id="quantity" name="quantity[]" class="form-control input-text quantity"
                 
             @if($sale->id)
                 value = "{{ $getSale->quantity }}"
@@ -33,7 +33,7 @@
     <td>
         <div class="form-group" style="display:flex; flex:wrap;">
 
-            <input type="text" readonly id="sale_price" name="sale_price[]" class="form-control input-barang sale_price"
+            <input type="text" readonly id="sale_price" name="sale_price[]" class="form-control sale_price"
             @if($sale->id)
             value = "{{ $getSale->price }}"
             @else

@@ -2,7 +2,7 @@
 @section('content')
 <!-- Default box -->
 <div class="container-fluid">
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 col-6">
         <div class="card-body">
             <form action="{{ $action }}" method="POST">
                 @csrf

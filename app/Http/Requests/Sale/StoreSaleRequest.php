@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Sale;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSaleRequest extends FormRequest
 {
@@ -24,6 +25,7 @@ class StoreSaleRequest extends FormRequest
     public function rules()
     {
         return [
+            'code'        => [Rule::unique('sales', 'code')],
             'customer_id' => 'required',
             'sales_date'  => 'required',
             'sub_total'   => 'required',

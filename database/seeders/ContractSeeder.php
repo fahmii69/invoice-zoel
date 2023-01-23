@@ -22,7 +22,7 @@ class ContractSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $contract = Contract::create(
                 [
                     'customer_id' => Customer::inRandomOrder()->first()->id,
