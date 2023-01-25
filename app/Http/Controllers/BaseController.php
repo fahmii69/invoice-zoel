@@ -32,6 +32,8 @@ class BaseController extends Controller
 
             // dd($this->auth->getAllPermissions());
 
+            $this->nama = "test";
+
             return $next($request);
         });
     }

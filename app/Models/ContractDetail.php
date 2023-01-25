@@ -13,11 +13,17 @@ class ContractDetail extends Model
     protected $guarded = [];
     protected $append = [
         'contract_product',
+        'contract_price',
     ];
 
     public function getContractProductAttribute()
     {
         return $this->product?->name;
+    }
+
+    public function getContractPriceAttribute()
+    {
+        return rupiah($this->price);
     }
 
     public function contract()

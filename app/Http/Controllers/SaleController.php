@@ -270,7 +270,7 @@ class SaleController extends BaseController
         $customer = $sale->customer->name;
         $date     = $sale->sales_date;
 
-        $pdf = Pdf::loadView('transactions.sale.receipt', compact('sale'));
+        $pdf = Pdf::loadView('transactions.sale.sample', compact('sale'));
         return $pdf->stream("invoice $id $customer $date.pdf");
     }
 }

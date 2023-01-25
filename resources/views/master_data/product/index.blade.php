@@ -10,11 +10,9 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Product Code</th>
                             <th>Product Name</th>
                             <th>Product Category</th>
-                            <th>Inventory</th>
-                            <th>Buy Price</th>
+                            {{-- <th>Buy Price</th> --}}
                             <th>Sale Price</th>
                             <th>Action</th>
                         </tr>
@@ -41,10 +39,6 @@
                     searchable: false,
                 },
                 {
-                    data: 'code',
-                    name: 'code'
-                },
-                {
                     data: 'name',
                     name: 'name'
                 },
@@ -52,14 +46,10 @@
                     data: 'category_id',
                     name: 'category_id'
                 },
-                {
-                    data: 'total_inventory',
-                    name: 'total_inventory'
-                },
-                {
-                    data: 'buy_price',
-                    render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
-                },
+                // {
+                //     data: 'buy_price',
+                //     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
+                // },
                 {
                     data: 'sale_price',
                     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),

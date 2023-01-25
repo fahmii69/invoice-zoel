@@ -12,7 +12,11 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="" class="row">Date Range</label>
-                        <input type="text" name="daterange" class="form-control  @error('daterange') is-invalid @enderror" value="" id="daterange" />
+                        <input type="text" name="daterange" class="form-control  @error('daterange') is-invalid @enderror"id="daterange"
+                        @if($contract->id)
+                            value="{{ date('d/m/Y',strtotime($contract->start_date)).' - '. date('d/m/Y',strtotime($contract->end_date)) }}" 
+                        @endif
+                         />
                         @error('daterange')
                         <div class="invalid-feedback">
                             {{ $message }}
@@ -64,7 +68,7 @@
                 <div class="row">
                     <div class="col-12">
                         <input type="submit" value="Submit" class="btn btn-success float-right">
-                        <a href="{{ route('sale.index') }}" class="btn btn-secondary float-right mr-2">Cancel</a>
+                        <a href="{{ route('contract.index') }}" class="btn btn-secondary float-right mr-2">Cancel</a>
                     </div>
             </form>
         </div>
@@ -153,6 +157,8 @@
 <script>
     loopEditProduct();
 
+    
+
     function loopEditProduct(){
     html = `{!! $editProduct !!}`;
         $('#product-column').append(html);
@@ -161,6 +167,16 @@
             placeholder: '-- Select Product --',
             allowClear : true
         });
+
+        $('.price').inputmask({
+                'alias'             : 'decimal',
+                'prefix'            : 'Rp. ',
+                'groupSeparator'    : ',',
+                'autoGroup'         : true,
+                'digits'            : 2,
+                'digitsOptional'    : false,
+                'removeMaskOnSubmit': true,
+            });
 
         $('.product_list').last().focus();
 }

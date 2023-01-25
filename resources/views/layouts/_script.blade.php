@@ -24,6 +24,11 @@
 <!-- DatetimeRangePicker -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<!-- ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Custom JS -->
 <script type="text/javascript">
     function ribuan(value){
         var 	a = value;
@@ -36,65 +41,62 @@
             return c;
     }  
 
-    function isNumberKey(evt) {
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if (charCode > 31 && (charCode < 48 || charCode > 57))
-      return false;
+    /** add active class and stay opened when selected */
+    var url = window.location;
 
-    return true;
-  }
-</script>
+    // for sidebar menu entirely but not cover treeview
+    $('ul.nav-sidebar a').filter(function() {
+        return this.href == url;
+    }).addClass('active');
 
-<!-- AdminLTE for demo purposes -->
-{{-- <script src="{{ asset('AdminLTE/dist/js/demo.js') }}"></script> --}}
+    // for treeview
+    $('ul.nav-treeview a').filter(function() {
+        return this.href == url;
+    }).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
 
-{{-- <script type="text/javascript">
     const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000
-    });
-
-    @if(Session::has('message'))
-        var type = "{{ Session::get('alert-type', 'info') }}";
-        switch(type){
-            case 'info':
-                Toast.fire({
-                    // icon: 'info',
-                    title: '{{ Session::get('message') }}'
-                });
-                break;
-            case 'warning':
-                Toast.fire({
-                    // icon: 'warning',
-                    title: '{{ Session::get('message') }}'
-                });
-                break;
-            case 'success':
-                Toast.fire({
-                    // icon: 'success',
-                    title: '{{ Session::get('message') }}'
-                });
-                break;
-            case 'error':
-                Toast.fire({
-                    // icon: 'error',
-                    title: '{{ Session::get('message') }}'
-                });
-                break;
-        }
-    @endif
-
-    @if(isset($errors->all()[0]))
-        Toast.fire({
-            // icon: 'error',
-            title: '{{ $errors->all()[0] }}'
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            background: 'gray',
+            timer: 3500
         });
-    @endif
 
-</script> --}}
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-{{-- <script src="{{ asset('AdminLTE/dist/js/pages/dashboard2.js') }}"></script>         --}}
-{{-- <script src="{{ asset('resources/js/crud.js') }}"></script> --}}
+        @if(Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}";
+            switch(type){
+                case 'info':
+                    Toast.fire({
+                        icon: 'info',
+                        title: '{{ Session::get('message') }}'
+                    });
+                    break;
+                case 'warning':
+                    Toast.fire({
+                        icon: 'warning',
+                        title: '{{ Session::get('message') }}'
+                    });
+                    break;
+                case 'success':
+                    Toast.fire({
+                        icon: 'success',
+                        title: '{{ Session::get('message') }}'
+                    });
+                    break;
+                case 'error':
+                    Toast.fire({
+                        icon: 'error',
+                        title: '{{ Session::get('message') }}'
+                    });
+                    break;
+            }
+        @endif
+
+        @if(isset($errors->all()[0]))
+            Toast.fire({
+                // icon: 'error',
+                title: '{{ $errors->all()[0] }}'
+            });
+        @endif
+</script>
 @stack('js');   

@@ -16,16 +16,11 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create('id_ID');
-
-        for ($i = 0; $i < 5; $i++) {
-            Category::insert(
-                [
-                    'name'       => $faker->word(),
-                    'created_at' => now()->toDateTimeString(),
-                    'updated_at' => now()->toDateTimeString(),
-                ]
-            );
-        }
+        Category::insert([
+            ['name'       => 'Additional'],
+            ['name'       => 'Fruit'],
+            ['name'       => 'Herb'],
+            ['name'       => 'Vegetables'],
+        ]);
     }
 }

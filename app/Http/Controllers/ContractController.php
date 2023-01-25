@@ -55,7 +55,13 @@ class ContractController extends Controller
                     return $data->contractDetail->pluck('contract_product')->toArray();
                 })
                 ->addColumn('contract_price', function ($data) {
-                    return $data->contractDetail->pluck('price')->toArray();
+                    return $data->contractDetail->pluck('contract_price')->toArray();
+                })
+                ->editColumn('start_date', function ($data) {
+                    return Carbon::parse($data->start_date)->format('d-M-Y');
+                })
+                ->editColumn('end_date', function ($data) {
+                    return Carbon::parse($data->end_date)->format('d-M-Y');
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('contract.edit', $data->id);

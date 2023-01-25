@@ -16,11 +16,30 @@ class SettingSeeder extends Seeder
     public function run()
     {
         Setting::insert([
-            // [
-            //     'name'  => 'nominal_denda',
-            //     'description' => 'Denda Terlambat',
-            //     'value' => '15000',
-            // ],
+            [
+                'name'  => 'jp_name',
+                'value' => 'Jaya Perkasa Daily Fresh ',
+            ],
+            [
+                'name'  => 'jp_address',
+                'value' => 'Jalan Raya Sunset Road No 6 ',
+            ],
+            [
+                'name'  => 'jp_state',
+                'value' => 'Kuta - Bali ',
+            ],
+            [
+                'name'  => 'jp_website',
+                'value' => 'www.jayaperkasadailyfresh.com ',
+            ],
+            [
+                'name'  => 'jp_email',
+                'value' => 'sales@jayaperkasadailyfresh.com',
+            ],
+            [
+                'name'  => 'jp_phone',
+                'value' => '+62 821-4599-4317',
+            ],
         ]);
     }
 }

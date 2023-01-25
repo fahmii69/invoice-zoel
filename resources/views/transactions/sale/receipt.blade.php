@@ -14,22 +14,29 @@
 			body {
 				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
 				text-align: center;
-				color: #777;
+				/* color: #000; */
 			}
 
-			body h1 {
-				font-weight: 300;
+			 .jp-name {
+				/* font-style: sans-serif, !important */
+				font-weight: 300px;
 				margin-bottom: 0px;
 				padding-bottom: 0px;
 				color: #000;
+				font-size: 21px !important
 			}
 
-			body h3 {
-				font-weight: 300;
+			.header{
+				font-size:12px;
+				/* margin-bottom: 2px; */
+				/* margin-top: 5px */
+			}
+
+			body h2 {
+				font-weight: 300px;
 				margin-top: 10px;
 				margin-bottom: 20px;
-				font-style: italic;
-				color: #555;
+				font-size: 21px;
 			}
 
 			body a {
@@ -37,15 +44,11 @@
 			}
 
 			.invoice-box {
-				max-width: 800px;
-				margin: auto;
-				padding: 30px;
-				border: 1px solid #eee;
 				box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-				font-size: 16px;
-				line-height: 24px;
+				font-size: 14px;
+				line-height: 18px;
 				font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-				color: #555;
+				color: rgb(0, 0, 0);
 			}
 
 			.invoice-box table {
@@ -68,10 +71,21 @@
 				/* padding-bottom: 20px; */
 			}
 
+			.invoice-box table tr.top table {
+
+				border: 1px solid #000
+				/* border-bottom: 1px solid #000; */
+				/* border-bottom: 1px solid #000; */
+				/* border-bottom: 1px solid #000; */
+				/* border-bottom: 1px solid #000; */
+
+				/* padding-bottom: 20px; */
+			}
+
 			.invoice-box table tr.top table td.title {
 				font-size: 45px;
 				line-height: 45px;
-				color: #333;
+				/* color: #333; */
 			}
 
 			.invoice-box table tr.information table td {
@@ -80,7 +94,7 @@
 
 			.invoice-box table tr.heading td {
 				background: #eee;
-				border-bottom: 1px solid #ddd;
+				border-bottom: 1px solid #000;
 				font-weight: bold;
 			}
 
@@ -156,45 +170,70 @@
 
 	<body>
 		<div class="invoice-box">
-			<div class="mb-4">
-				<img src="{{ url('https://zoelidesigns.com/wp-content/uploads/2021/11/zoeli-logo-2.png') }}" alt="Company Logo" style="width: 50%; max-width: 300px">
+		<div class="mb-2">
+			<h3 class="jp-name">{{ getSetting('jp_name') }}</h3>
+			<div class="header">
+				<span>{{ getSetting('jp_address') }}</span><br>
+				<span>{{ getSetting('jp_state') }}</span><br>
+				<span>{{ getSetting('jp_website') }}</span><br>
+				<span>{{ getSetting('jp_email') }}</span><br>
+				<span>{{ getSetting('jp_phone') }}</span><br>
 			</div>
+			<h2>INVOICE</h2>
+		</div>
 			
 			<table>
 				<tr class="top">
-					<td colspan="4">
-						<table style="color: #181818; font-size: 90%" class="mb-3" >
+					<td>
+						<table style="font-size: 90%" class="mb-3" >
 							<tr>
-								<td>Invoice No</td>
+								<td>Invoice Number</td>
 								<td>:</td>
-								<td>{{ $sale->code }}</td>
+								<td style="font-weight: bold">{{ $sale->code }}</td>
 							</tr>
 							<tr>
 								<td>Invoice Date</td>
 								<td>:</td>
-								<td>{{ date('j F Y H:i A', strtotime($sale->created_at)) }}</td>
+								<td >{{ date('j F Y', strtotime($sale->created_at)) }}</td>
+							</tr>
+							<tr>
+								<td>Invoice Due Date</td>
+								<td>:</td>
+								<td>{{ date('j F Y', strtotime($sale->created_at)) }}</td>
+							</tr>
+							<tr>
+								<td>Balance Due</td>
+								<td>:</td>
+								<td>{{ rupiah($sale->grand_total) }}</td>
 							</tr>
 						</table>
 					</td>
 
-					<td colspan="2">
-						<table style="color: #181818; font-size: 90%;">
+					<td>
+						<table style="font-size: 90%;">
 							<tr>
-								<td>
-                                    <b>Billing Details</b><br />
-								@php
-									$customer      = $sale->customer;
-
-									$name = $customer->name;
-									$address  = $customer->address;
-									$phone = $customer->phone;
-								@endphp
-
-									{{ $name }}<br>
-									{{ $phone }} <br>
-									{{ $address }} <br>
-
-								</td>
+								<td>Customer Type</td>
+								<td>:</td>
+								<td>{{ $sale->customer->customer_type }}</td>
+							</tr>
+							<tr>
+								<td style="font-weight: bold">{{ $sale->customer->name }}</td>
+								<td></td>
+								<td></td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						<table style="font-size: 90%;">
+							<tr>
+								<td>Ships To</td>
+								<td>:</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>Order Date</td>
+								<td>:</td>
+								<td></td>
 							</tr>
 						</table>
 					</td>

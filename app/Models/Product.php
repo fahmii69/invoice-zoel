@@ -16,12 +16,18 @@ class Product extends Model implements UploadedFilesInterface
     protected $guarded = [];
     protected $table   = 'products';
     protected $appends = [
-        'total_inventory'
+        'total_inventory',
+        'total_sales_quantity',
     ];
 
     public function getTotalInventoryAttribute()
     {
         return $this->stocks?->sum('quantity');
+    }
+
+    public function getTotalSalesQuantityAttribute()
+    {
+        return $this->saleDetail?->sum('quantity');
     }
 
     public function stocks(): HasMany
@@ -39,9 +45,9 @@ class Product extends Model implements UploadedFilesInterface
         return $this->hasMany(ReceiveDetail::class, 'product_id');
     }
 
-    public function sale(): HasMany
+    public function saleDetail(): HasMany
     {
-        return $this->hasMany(SalesDetail::class, 'product_id');
+        return $this->hasMany(SaleDetail::class, 'product_id');
     }
 
     public function category(): BelongsTo

@@ -20,10 +20,10 @@ class StockSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < Product::count(); $i++) {
             Stock::create(
                 [
-                    'product_id' => Product::inRandomOrder()->first()->id,
+                    'product_id' => $i + 1,
                     'quantity'   => $faker->randomNumber(2, false),
                     'created_at' => now()->toDateTimeString(),
                     'updated_at' => now()->toDateTimeString(),

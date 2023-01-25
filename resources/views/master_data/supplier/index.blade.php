@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('content')
+{{-- @include('sweetalert::alert') --}}
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">

@@ -49,7 +49,7 @@
                 },
                 {
                     data: 'contract_price',
-                    // render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
+                    name: 'contract_price'
                 },
                 {
                     data: 'start_date',

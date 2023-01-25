@@ -3,7 +3,9 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
@@ -20,9 +22,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard.index');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+Route::get('/chart', [DashboardController::class, 'chart'])->name('dashboard.chart');
+
+Route::get('/sale/get', [SaleController::class, 'getSale'])->name('sale.list');
+Route::get('/pdf/{sale}', [SaleController::class, 'pdf'])->name('sale.pdf');
+Route::post('/sale/get/contract/price', [SaleController::class, 'getContractPrice'])->name('sale.getContractPrice');
+Route::resource('sale', SaleController::class);
 
 Route::get('/product/get', [ProductController::class, 'getProduct'])->name('product.list');
 Route::resource('product', ProductController::class);
@@ -39,10 +45,10 @@ Route::resource('customer', CustomerController::class);
 Route::get('/stock/get', [StockController::class, 'getStock'])->name('stock.list');
 Route::resource('stock', StockController::class);
 
-Route::get('/contract/get', [ContractController::class, 'getcontract'])->name('contract.list');
+Route::get('/contract/get', [ContractController::class, 'getContract'])->name('contract.list');
 Route::resource('contract', ContractController::class);
 
-Route::get('/sale/get', [SaleController::class, 'getSale'])->name('sale.list');
-Route::get('/pdf/{sale}', [SaleController::class, 'pdf'])->name('sale.pdf');
-Route::post('/sale/get/contract/price', [SaleController::class, 'getContractPrice'])->name('sale.getContractPrice');
-Route::resource('sale', SaleController::class);
+Route::post('/report/get/total', [ReportController::class, 'getTotalSalesQuantity'])->name('report.getTotalSalesQuantity');
+Route::get('/report/export', [ReportController::class, 'export'])->name('report.export');
+// Route::get('/report/get', [ReportController::class, 'getReport'])->name('report.list');
+Route::resource('report', ReportController::class);
