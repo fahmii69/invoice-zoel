@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id');
-            $table->date('sales_date');
             $table->string('code');
+            $table->date('sales_date');
+            $table->date('due_date');
             $table->decimal('sub_total', 0, 0);
             $table->decimal('tax', 0, 0)->default(0);
             $table->decimal('grand_total', 0, 0);

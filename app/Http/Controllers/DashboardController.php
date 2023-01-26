@@ -45,22 +45,23 @@ class DashboardController extends BaseController
             $saleDetail = SaleDetail::query()
                 ->select(DB::raw('SUM(quantity) as total_quantity'), 'product_id', 'sales_id')
                 ->with('sale', 'product')
-                ->whereHas('sale', function ($q) use ($startDate, $endDate) {
+                ->join('sales', function ($q) use ($startDate, $endDate) {
                     $q->whereBetween('sales_date', [$startDate, $endDate]);
+                    $q->on('sales.id', '=', 'sale_details.sales_id');
                 })
-                ->groupBy('product_id')
+                ->groupBy('sales.sales_date')
                 ->get();
 
             // $saleDetail = SaleDetail::query()
-            // ->with('sale', 'sale.customer')
-            // ->select(DB::raw('SUM(quantity) as total_quantity'), 'product_id', 'sales_id')
-            // ->join('sales', function ($q) use ($startDate, $endDate) {
-            //     $q->whereBetween('sales_date', [$startDate, $endDate]);
-            //     $q->on('sales.id', '=', 'sale_details.sales_id');
-            // })
-            // ->whereProductId($productId)
-            // ->groupBy('product_id', 'sales.customer_id')
-            // ->get();
+            //     ->with('sale', 'sale.customer')
+            //     ->select(DB::raw('SUM(quantity) as total_quantity'), 'product_id', 'sales_id')
+            //     ->join('sales', function ($q) use ($startDate, $endDate) {
+            //         $q->whereBetween('sales_date', [$startDate, $endDate]);
+            //         $q->on('sales.id', '=', 'sale_details.sales_id');
+            //     })
+            //     ->whereProductId($productId)
+            //     ->groupBy('product_id', 'sales.customer_id')
+            //     ->get();
 
             $response['data']   = $saleDetail;
             $response['status'] = true;

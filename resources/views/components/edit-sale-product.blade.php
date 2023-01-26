@@ -47,7 +47,7 @@
         {{-- <span class="form-group"> --}}
             
             @if($sale->id)
-            Rp. {{ $getSale->total }}
+            {{ $getSale->total }}
             @else
                 Rp.0
             @endif

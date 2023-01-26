@@ -48,7 +48,10 @@ class SaleController extends BaseController
                     return $data->customer->name;
                 })
                 ->editColumn('sales_date', function ($data) {
-                    return Carbon::parse($data->created_at)->format('d-M-Y');
+                    return Carbon::parse($data->sales_date)->format('d-M-Y');
+                })
+                ->editColumn('due_date', function ($data) {
+                    return Carbon::parse($data->due_date)->format('d-M-Y');
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('sale.edit', $data->id);
@@ -85,6 +88,7 @@ class SaleController extends BaseController
      */
     public function store(StoreSaleRequest $request): RedirectResponse
     {
+
         DB::beginTransaction();
 
         $karakter = "ABCDEVGHIJKLMNOPQRSTUVWXYZ";
@@ -94,7 +98,7 @@ class SaleController extends BaseController
         try {
 
             $sale = new Sale($request->safe(
-                ['sales_date', 'customer_id', 'sub_total',]
+                ['sales_date', 'due_date', 'customer_id', 'sub_total',]
             ));
 
             $sale->code  = $code;
@@ -168,7 +172,7 @@ class SaleController extends BaseController
         try {
 
             $sale->fill($request->safe(
-                ['sales_date', 'customer_id', 'sub_total',]
+                ['sales_date', 'due_date', 'customer_id', 'sub_total',]
             ));
 
 
@@ -270,7 +274,11 @@ class SaleController extends BaseController
         $customer = $sale->customer->name;
         $date     = $sale->sales_date;
 
-        $pdf = Pdf::loadView('transactions.sale.sample', compact('sale'));
+        $this->sale = $sale;
+
+        // return view('transactions.sale.sample', $this->data);
+        $pdf = Pdf::loadView('transactions.sale.receipt', $this->data);
+
         return $pdf->stream("invoice $id $customer $date.pdf");
     }
 }

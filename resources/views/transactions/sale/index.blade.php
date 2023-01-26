@@ -13,6 +13,7 @@
                             <th>Product</th>
                             <th>Customer</th>
                             <th>Sale Date</th>
+                            <th>Due Date</th>
                             <th>Sale Price</th>
                             <th>Action</th>
                         </tr>
@@ -49,6 +50,10 @@
                 {
                     data: 'sales_date',
                     name: 'sales_date'
+                },
+                {
+                    data: 'due_date',
+                    name: 'due_date'
                 },
                 {
                     data: 'grand_total',

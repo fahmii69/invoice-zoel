@@ -28,6 +28,7 @@ class UpdateSaleRequest extends FormRequest
             'code'        => [Rule::unique('sales', 'code')->ignore($this->sale)],
             'customer_id' => 'required',
             'sales_date'  => 'required',
+            'due_date'    => 'required',
             'sub_total'   => 'required',
             'notes'       => 'nullable',
         ];
@@ -42,6 +43,7 @@ class UpdateSaleRequest extends FormRequest
     {
         return [
             'sales_date.required'  => ' Sales Date must be filled in.',
+            'due_date.required'  => ' Due Date must be filled in.',
             'customer_id.required' => ' Customer must be filled in.',
         ];
     }

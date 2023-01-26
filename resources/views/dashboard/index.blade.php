@@ -67,14 +67,6 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-				<div class="col-md-4 p-4">
-                    <label for="" class="row">Date Range</label>
-                    <input type="text" name="daterange" class="form-control row" value="" id="daterange" />
-                    <br>
-                </div>
-				<div class="col-sm-12">
-                    <canvas id="myChart" height="300" style="display: block; width: 1576px; max-height: 300px;" ></canvas>
-                </div>
                 <div class="card-header">
                     <h5 class="card-title">Monthly Recap Report</h5>
 
@@ -99,54 +91,18 @@
                         </button>
                     </div>
                 </div>
-                <!-- /.card-header -->
-
-                <!-- ./card-body -->
+                    <!-- /.card-header -->
                 <div class="card-footer">
-                    <div class="row">
-                        <div class="col-sm-3 col-6">
-                            <div class="description-block border-right">
-                                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i>
-                                    17%</span>
-                                <h5 class="description-header">$35,210.43</h5>
-                                <span class="description-text">TOTAL REVENUE</span>
-                            </div>
-                            <!-- /.description-block -->
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-sm-3 col-6">
-                            <div class="description-block border-right">
-                                <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i>
-                                    0%</span>
-                                <h5 class="description-header">$10,390.90</h5>
-                                <span class="description-text">TOTAL COST</span>
-                            </div>
-                            <!-- /.description-block -->
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-sm-3 col-6">
-                            <div class="description-block border-right">
-                                <span class="description-percentage text-success"><i class="fas fa-caret-up"></i>
-                                    20%</span>
-                                <h5 class="description-header">$24,813.53</h5>
-                                <span class="description-text">TOTAL PROFIT</span>
-                            </div>
-                            <!-- /.description-block -->
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-sm-3 col-6">
-                            <div class="description-block">
-                                <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i>
-                                    18%</span>
-                                <h5 class="description-header">1200</h5>
-                                <span class="description-text">GOAL COMPLETIONS</span>
-                            </div>
-                            <!-- /.description-block -->
-                        </div>
-                    </div>
-                    <!-- /.row -->
+				<div class="col-md-4">
+                    <label for="" class="row">Date Range</label>
+                    <input type="text" name="daterange" class="form-control row" value="" id="daterange" />
+                    <br>
                 </div>
-                <!-- /.card-footer -->
+				<div class="col-sm-12">
+                    <canvas id="barChart" height="300" style="display: block; width: 1576px; max-height: 300px;" ></canvas>
+                </div>
+            </div>
+                <!-- ./card-body -->
             </div>
             <!-- /.card -->
         </div>
@@ -158,6 +114,29 @@
     <div class="row">
         <!-- Left col -->
         <div class="col-md-8">
+            <!-- MAP & BOX PANE -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">US-Visitors Report</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <div>
+                        <canvas id="pieChart" height="300" style="display: block; width: 1576px; max-height: 300px;" ></canvas>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
             <div class="row">
                 <div class="col-md-6">
                 </div>
@@ -181,88 +160,111 @@
 @push('js')
 <script>
 
-
-		let date = new Date();
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        let year = date.getFullYear();
-
-        // This arrangement can be altered based on how we want the date's format to appear.
-        let currentDate = `${year}-${month}-${day}`;
-        fetch_data(currentDate, currentDate);
-	    
-        $(function() {
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left',
-                locale:{
-                    format: 'DD/MM/YYYY'
-                }
-            }, function(startDate, endDate, label) {
-                console.log(startDate, endDate)
-                console.log("A new date selection was made: " + startDate.format('YYYY-MM-DD') + ' to ' + endDate.format('YYYY-MM-DD'));
-                $('input[name="daterange"]').val(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
-                $('input[name="daterange"]').html(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
-                fetch_data(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
-            });
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left',
+            locale:{
+                format: 'DD/MM/YYYY'
+            }
+        }, function(startDate, endDate, label) {
+            console.log(startDate, endDate)
+            console.log("A new date selection was made: " + startDate.format('YYYY-MM-DD') + ' to ' + endDate.format('YYYY-MM-DD'));
+            $('input[name="daterange"]').val(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
+            $('input[name="daterange"]').html(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
+            fetch_data(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
         });
+        
+        var date=new Date(); 
+        var firstDay=new Date(date.getFullYear(), date.getMonth(), 2).toISOString().slice(0, 10); 
+        var lastDay=new Date(date.getFullYear(), date.getMonth() + 1,).toISOString().slice(0, 10); 
+        $('input[name="daterange"]').val(firstDay + ' - ' + lastDay);
+                $('input[name="daterange"]').html(firstDay + ' - ' + lastDay);
+        fetch_data(firstDay, lastDay);
 
-		function fetch_data(startDate, endDate)
-        {
+    });
 
-            $.ajax({
-                type: "GET",
-                url: `{{ url("chart") }}`,
-				data: {
-					action : "fetch",
-					startDate,
-					endDate,	
-				},
-                success: function (response) {
+    function fetch_data(startDate, endDate)
+    {
 
-                    var labels = response.data.map(function (e) {
-                        return e.product_id
-                    })
+        $.ajax({
+            type: "GET",
+            url: `{{ url("chart") }}`,
+            data: {
+                action : "fetch",
+                startDate,
+                endDate,	
+            },
+            success: function (response) {
 
-                    var data = response.data.map(function (e) {
-                        return e.total_quantity
-                    })
+                console.log(response.data.map);
 
-                    console.log(response.data, labels, data);
+                var labels = response.data.map(function (e) {
+                    return e.sale.sales_date
+                })
 
-                    var ctx = $('#myChart');
-                    var config = {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Total Product Sales per Day',
-                                data: data,
-                                backgroundColor: 'rgba(75, 192, 192, 1)',
+                var data = response.data.map(function (e) {
+                    return e.total_quantity
+                })
 
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                // yAxes: [{
-                                //     ticks: {
-                                //         beginAtZero: true
-                                //     }
-                                // }]
+                console.log(response.data, labels, data);
+
+                var ctx = $('#barChart');
+                var ctx2 = $('#pieChart');
+                var config = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Product Sales per Day',
+                            data: data,
+                            backgroundColor: 'rgba(75, 192, 192, 1)',
+
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day',
+                                    displayFormats: {
+                                        quarter: 'MMM YYYY'
+                                    }
+                                }
                             }
                         }
-                    };
-					// ctx.empty();
+                    }
+                };
+                // ctx.empty();
 
-					const c = Chart.getChart(ctx);
-					if (c) c.destroy();
 
-					new Chart(ctx, config);
-                    // var chart = new Chart(ctx, config);
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseJSON);
-                }
-            });
-        };
+                const c = Chart.getChart(ctx);
+                if (c) c.destroy();
+
+                const d = Chart.getChart(ctx2);
+                if (d) d.destroy();
+
+
+                const myChart1 = new Chart(ctx, config);
+
+                const myChart2 = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Product Sales per Day',
+                            data: data,
+
+                        }]
+                    },
+                    // options: options2
+                })
+                // var chart = new Chart(ctx, config);
+            },
+            error: function(xhr) {
+                console.log(xhr.responseJSON);
+            }
+        });
+    };
 </script>
 @endpush

@@ -31,7 +31,7 @@
                             class="customer_id form-control @error('customer_id') is-invalid @enderror">
                             @foreach ($customer as $item)
                             <option></option>
-                            <option value="{{$item->id}}" data-custId="{{ $item->id }}"
+                            <option value="{{$item->id}}" data-custPayTerms="{{ $item->payment_terms }}"
                                 @selected($sale->customer_id == $item->id)>
                                 {{ $item->name }}
                             </option>
@@ -42,6 +42,20 @@
                             {{ $message }}
                         </div>
                         @enderror
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="due_date">Due Date</label>
+                            <input type="date" name="due_date" id="due_date" readonly
+                                class="due_date form-control @error('due_date') is-invalid @enderror"
+                                value="{{ old('due_date') ?? $sale->due_date }}">
+                            @error('due_date')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
@@ -91,6 +105,7 @@
 @endsection
 @push('js')
 <script>
+
     $('#shop_id').select2({
         placeholder: '-- Select Shop --',
         allowClear: true
@@ -125,6 +140,12 @@
     });
 
     $(document).on('change','.customer_id', function(){
+        let paymentDate = $(this).find(':selected').attr('data-custPayTerms');
+        paymentDate = parseInt(paymentDate);
+        var date = new Date();
+        date.setDate(date.getDate()+paymentDate); 
+        todayDate = date.toISOString().substr(0,10);
+        $(this).closest('.row').find('.due_date').val(todayDate);
         loopContractPrice();
     });
 
@@ -316,13 +337,32 @@
         });
 
         $('.product_list').last().focus();
-        grandTotalPrice();
-}
+
+        var tr = $('#product-column').find('tr');
+
+        $.each(tr, function(i, v){
+            container = $(this);
+            
+            let productId = container.find('.product_list').val()
+            let quantity  = container.find('.quantity').val()
+            let salePrice = container.find('.sale_price').val()
+                salePrice = parseFloat(salePrice.replace(/,/gi, '') || 0)
+
+                changePrice(quantity, salePrice, container); 
+        });       
+    }
 </script>
 @else
 <script>
     var contractProducts = [];
     loopAddProduct();
+
+    $(function(){
+        var todayDate = new Date().toISOString().slice(0, 10);
+        $('#sales_date').val(todayDate);
+        $('#due_date').val(todayDate);
+        console.log(todayDate);
+    });
 </script>
 @endif
 @endpush
