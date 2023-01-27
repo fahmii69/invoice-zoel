@@ -115,7 +115,7 @@
         <!-- Left col -->
         <div class="col-md-8">
             <!-- MAP & BOX PANE -->
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">US-Visitors Report</h3>
 
@@ -135,7 +135,7 @@
                     </div>
                 </div>
                 <!-- /.card-body -->
-            </div>
+            </div> --}}
             <!-- /.card -->
             <div class="row">
                 <div class="col-md-6">
@@ -167,7 +167,6 @@
                 format: 'DD/MM/YYYY'
             }
         }, function(startDate, endDate, label) {
-            console.log(startDate, endDate)
             console.log("A new date selection was made: " + startDate.format('YYYY-MM-DD') + ' to ' + endDate.format('YYYY-MM-DD'));
             $('input[name="daterange"]').val(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
             $('input[name="daterange"]').html(startDate.format('YYYY-MM-DD') + ' - ' + endDate.format('YYYY-MM-DD'));
@@ -196,8 +195,6 @@
             },
             success: function (response) {
 
-                console.log(response.data.map);
-
                 var labels = response.data.map(function (e) {
                     return e.sale.sales_date
                 })
@@ -205,11 +202,9 @@
                 var data = response.data.map(function (e) {
                     return e.total_quantity
                 })
-
-                console.log(response.data, labels, data);
-
+                
                 var ctx = $('#barChart');
-                var ctx2 = $('#pieChart');
+                // var ctx2 = $('#pieChart');
                 var config = {
                     type: 'bar',
                     data: {
@@ -241,25 +236,33 @@
                 const c = Chart.getChart(ctx);
                 if (c) c.destroy();
 
-                const d = Chart.getChart(ctx2);
-                if (d) d.destroy();
+
 
 
                 const myChart1 = new Chart(ctx, config);
 
-                const myChart2 = new Chart(ctx2, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Total Product Sales per Day',
-                            data: data,
-
-                        }]
-                    },
-                    // options: options2
-                })
-                // var chart = new Chart(ctx, config);
+                // const myChart2 = new Chart(ctx2, {
+                //     type: 'pie',
+                //     data: {
+                //         labels: labels,
+                //         datasets: [{
+                //             label: 'Total Product Sales per Day',
+                //             data: data,
+                //         }]
+                //     },
+                //     options: {
+                //         responsive: true,
+                //         plugins: {
+                //         legend: {
+                //             position: 'top',
+                //         },
+                //         title: {
+                //             display: true,
+                //             text: 'Chart.js Pie Chart'
+                //         }
+                //         }
+                //     },
+                // })
             },
             error: function(xhr) {
                 console.log(xhr.responseJSON);

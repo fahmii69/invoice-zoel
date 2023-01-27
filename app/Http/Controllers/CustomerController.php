@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class CustomerController extends Controller
+class CustomerController extends BaseController
 {
     /**
      * Constructor
@@ -47,6 +47,11 @@ class CustomerController extends Controller
                     $route = route('customer.edit', $data->id);
                     return view('components.action-button', compact('data', 'route'));
                 })
+                ->editColumn('payment_terms', function ($data) {
+                    if ($data->payment_terms > 0) {
+                        return $data->payment_terms;
+                    }
+                })
                 ->make(true);
         }
     }
@@ -73,11 +78,24 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request): RedirectResponse
     {
+
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
             $customer = new Customer($request->safe(
-                ['name', 'address', 'phone',]
+                [
+                    'name',
+                    'address',
+                    'state',
+                    'province',
+                    'postcode',
+                    'country',
+                    'work_phone',
+                    'payment_terms',
+                    'customer_type',
+                    'send_reminders'
+                ]
             ));
 
             $customer->save();
@@ -125,10 +143,22 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $customer->fill($request->safe(
-                ['name', 'address', 'phone',]
+                [
+                    'name',
+                    'address',
+                    'state',
+                    'province',
+                    'postcode',
+                    'country',
+                    'work_phone',
+                    'payment_terms',
+                    'customer_type',
+                    'send_reminders'
+                ]
             ));
 
             $customer->update();

@@ -60,11 +60,28 @@
                 {{-- Master Data --}}
                 <li class="nav-header">Master Data</li>
                 <li class="nav-item">
-                    <a href="{{ route('product.index') }}" class="nav-link">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fa fa-tags"></i>
-                        <p>Products</p>
+                      <p>
+                        Products
+                        <i class="fas fa-angle-left right"></i>
+                      </p>
                     </a>
-                </li>
+                    <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                        <a href="{{ route('product.index') }}" class="nav-link">
+                          <i class="far fa-circle nav-icon"></i>
+                          <p>Products List</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{{ route('category.index') }}" class="nav-link">
+                          <i class="far fa-circle nav-icon"></i>
+                          <p>Products Category</p>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
 				{{-- <li class="nav-item">
                     <a href="{{ route('stock.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-box"></i>
@@ -93,14 +110,7 @@
                         <p>Contract</p>
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a href="{{ route('category.index') }}" class="nav-link">
-                        <i class="nav-icon fas fa-list"></i>
-                        <p>Category</p>
-                    </a>
-                </li>
-
+                
                 <li class="nav-item">
                     <a href="{{ route('report.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-book-reader"></i>

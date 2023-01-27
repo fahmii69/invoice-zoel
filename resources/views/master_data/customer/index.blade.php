@@ -10,9 +10,11 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Customer Name</th>
-                            <th>Customer Address</th>
-                            <th>Customer Phone</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Phone</th>
+                            <th>Customer Type</th>
+                            <th>Payment Terms</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -46,8 +48,17 @@
                     name: 'address',
                 },
                 {
-                    data: 'phone',
-                    name: 'phone',
+                    data: 'work_phone',
+                    name: 'work_phone',
+                },
+                {
+                    data: 'customer_type',
+                    name: 'customer_type',
+                },
+                {
+                    data: 'payment_terms',
+                    name: 'payment_terms',
+                    width: '5%'
                 },
                 {
                     data: 'action',
