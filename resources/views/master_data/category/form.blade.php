@@ -22,7 +22,7 @@
                 <div class="row">
                     <div class="col-12">
                         <input type="submit" value="Submit" class="btn btn-success float-right">
-                        <a href="/category" class="btn btn-secondary float-right mr-2">Cancel</a>
+                        <a href="{{ route('category.index') }}" class="btn btn-secondary float-right mr-2">Cancel</a>
                     </div>
             </form>
         </div>

@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class SupplierController extends Controller
+class SupplierController extends BaseController
 {
     /**
      * Constructor
      */
     public function __construct(
-        protected string $title = "Supplier",
         protected string $route = "supplier.",
         protected string $routeView = "master_data.supplier.",
     ) {
+        parent::__construct();
     }
 
     /**
@@ -32,9 +32,8 @@ class SupplierController extends Controller
      */
     public function index(): View
     {
-        return view($this->routeView . "index", [
-            'title'    => $this->title,
-        ]);
+        $this->title = 'Supplier';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getSupplier(Request $request)
@@ -54,15 +53,23 @@ class SupplierController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'    => "Add {$this->title}",
-            'supplier' => new Supplier(),
-            'action'   => route($this->route . 'store')
-        ]);
+        $this->title    = "Add Supplier";
+        $this->supplier = new Supplier();
+        $this->action   = route($this->route . 'store');
+
+        if ($this->auth->can('supplier.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -105,15 +112,23 @@ class SupplierController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  Supplier $supplier
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Supplier $supplier): View
+    public function edit(Supplier $supplier): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'          => "Edit {$this->title}",
-            'supplier' => $supplier,
-            'action'   => route($this->route . 'update', $supplier)
-        ]);
+        $this->title    = "Edit supplier";
+        $this->supplier = $supplier;
+        $this->action   = route($this->route . 'update', $supplier);
+
+        if ($this->auth->can('supplier.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -160,8 +175,12 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier): JsonResponse
     {
-        Supplier::destroy($supplier->id);
+        if ($this->auth->can('supplier.delete')) {
+            Supplier::destroy($supplier->id);
 
-        return response()->json(['success' => true, 'message' => 'Supplier Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Supplier Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 }

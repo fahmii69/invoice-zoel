@@ -26,7 +26,6 @@
 <!-- /.card -->
 @endsection
 @push('js')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function () {
         var table = $('#contract-dataTable').DataTable({
@@ -100,11 +99,17 @@
                             _token: '{{ csrf_token() }}',
                         },
                         success: function(response){
-                            
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.message
-                            });
+                            if(response.success){
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.message
+                                });
+                            } else {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: response.message
+                                });
+                            }
                             table.ajax.reload();
                         },
                         error: function(e){

@@ -13,16 +13,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class CategoryController extends Controller
+class CategoryController extends BaseController
 {
     /**
      * Constructor
      */
     public function __construct(
-        protected string $title = "Category",
         protected string $route = "category.",
         protected string $routeView = "master_data.category.",
+
     ) {
+        parent::__construct();
     }
 
     /**
@@ -32,9 +33,8 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
-        return view($this->routeView . "index", [
-            'title'    => $this->title,
-        ]);
+        $this->title = 'Category';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getCategory(Request $request)
@@ -54,15 +54,24 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'    => "Add {$this->title}",
-            'category' => new Category(),
-            'action'   => route($this->route . 'store')
-        ]);
+        $this->title    = "Add Category";
+        $this->category = new Category();
+        $this->action   = route($this->route . 'store');
+
+        if ($this->auth->can('category.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -105,15 +114,24 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  Category $category)
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Category $category): View
+    public function edit(Category $category): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'          => "Edit {$this->title}",
-            'category' => $category,
-            'action'   => route($this->route . 'update', $category)
-        ]);
+        $this->title    = "Edit Category";
+        $this->category = $category;
+        $this->action   = route($this->route . 'update', $category);
+
+        if ($this->auth->can('category.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -160,8 +178,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): JsonResponse
     {
-        Category::destroy($category->id);
+        if ($this->auth->can('category.delete')) {
+            Category::destroy($category->id);
 
-        return response()->json(['success' => true, 'message' => 'Category Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Category Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 }

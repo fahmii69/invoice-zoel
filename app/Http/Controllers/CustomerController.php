@@ -19,10 +19,10 @@ class CustomerController extends BaseController
      * Constructor
      */
     public function __construct(
-        protected string $title = "Customer",
         protected string $route = "customer.",
         protected string $routeView = "master_data.customer.",
     ) {
+        parent::__construct();
     }
 
     /**
@@ -32,9 +32,8 @@ class CustomerController extends BaseController
      */
     public function index(): View
     {
-        return view($this->routeView . "index", [
-            'title'    => $this->title,
-        ]);
+        $this->title = 'Customer';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getCustomer(Request $request)
@@ -59,15 +58,24 @@ class CustomerController extends BaseController
     /**
      * Show the form for creating a new resource.
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'    => "Add {$this->title}",
-            'customer' => new Customer(),
-            'action'   => route($this->route . 'store')
-        ]);
+        $this->title    = "Add Customer";
+        $this->customer = new Customer();
+        $this->action   = route($this->route . 'store');
+
+        if ($this->auth->can('customer.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -78,8 +86,6 @@ class CustomerController extends BaseController
      */
     public function store(StoreCustomerRequest $request): RedirectResponse
     {
-
-        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -123,15 +129,23 @@ class CustomerController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param  Customer $customer
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Customer $customer): View
+    public function edit(Customer $customer): View|RedirectResponse
     {
-        return view($this->routeView . "form", [
-            'title'    => "Edit {$this->title}",
-            'customer' => $customer,
-            'action'   => route($this->route . 'update', $customer)
-        ]);
+        $this->title    = "Edit Customer";
+        $this->customer = $customer;
+        $this->action   = route($this->route . 'update', $customer);
+
+        if ($this->auth->can('customer.edit')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -143,7 +157,6 @@ class CustomerController extends BaseController
      */
     public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
     {
-        // dd($request->all());
         DB::beginTransaction();
         try {
             $customer->fill($request->safe(
@@ -190,8 +203,12 @@ class CustomerController extends BaseController
      */
     public function destroy(Customer $customer): JsonResponse
     {
-        Customer::destroy($customer->id);
+        if ($this->auth->can('customer.delete')) {
+            Customer::destroy($customer->id);
 
-        return response()->json(['success' => true, 'message' => 'Customer Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Customer Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 }

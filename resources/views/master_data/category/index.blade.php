@@ -80,18 +80,17 @@
                             _token: '{{ csrf_token() }}',
                         },
                         success: function(response){
-                            if(response.status){
+                            if(response.success){
                                 Toast.fire({
-                                    // icon: 'success',
+                                    icon: 'success',
                                     title: response.message
                                 });
-                            }else{
+                            } else {
                                 Toast.fire({
-                                    // icon: 'error',
+                                    icon: 'error',
                                     title: response.message
                                 });
                             }
-
                             table.ajax.reload();
                         },
                         error: function(e){

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class BaseController extends Controller
@@ -26,9 +28,9 @@ class BaseController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            // $this->settings = Setting::get();
-            // $this->auth     = User::find(auth()->user()->id);
-            // $this->roleName = $this->auth->getRoleNames()[0];
+            $this->settings = Setting::get();
+            $this->auth     = User::find(auth()->user()->id);
+            $this->roleName = $this->auth->getRoleNames()[0];
 
             // dd($this->auth->getAllPermissions());
 

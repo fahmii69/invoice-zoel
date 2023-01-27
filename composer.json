@@ -14,9 +14,11 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
+        "spatie/laravel-permission": "^5.8",
         "yajra/laravel-datatables-oracle": "^10.0"
     },
     "require-dev": {
+        "laravel/breeze": "^1.18",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",

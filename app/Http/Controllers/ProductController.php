@@ -15,8 +15,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
+    /**
+     * Constructor
+     */
+    public function __construct(
+        protected string $route = "product.",
+        protected string $routeView = "master_data.product.",
+
+    ) {
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *
@@ -24,8 +34,8 @@ class ProductController extends Controller
      */
     public function index(): View
     {
-        $title = 'Product';
-        return view('master_data.product.index', compact('title'));
+        $this->title = 'Product';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getProduct(Request $request)
@@ -36,7 +46,6 @@ class ProductController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('category_id', function ($data) {
-                    // dd($data->category);
                     return $data->category->name;
                 })
                 ->addColumn('action', function ($data) {
@@ -50,16 +59,25 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        $title    = 'Add Product';
-        $category = Category::get();
-        $action   = route('product.store');
-        $product  = new Product;
+        $this->title    = 'Add Product';
+        $this->category = Category::get();
+        $this->action   = route('product.store');
+        $this->product  = new Product;
 
-        return view('master_data.product.form', compact('title', 'category', 'action', 'product'));
+        if ($this->auth->can('product.create')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -71,8 +89,6 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request): RedirectResponse
     {
         DB::beginTransaction();
-
-        // dd($request->all());
 
         $karakter = "ABCDEVGHIJKLMNOPQRSTUVWXYZ";
         $pin = rand(0, 9999999) . $karakter[rand(0, strlen($karakter) - 1)];

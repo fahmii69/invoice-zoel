@@ -15,7 +15,7 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">Alexander Pierce</a>
+                <a href="#" class="d-block">{{ Auth::user()->name }}</a>
             </div>
         </div>
 
@@ -104,13 +104,14 @@
                     </a>
                 </li>
 
+                @can('customer.index')
                 <li class="nav-item">
                     <a href="{{ route('contract.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>Contract</p>
                     </a>
                 </li>
-                
+                @endcan
                 <li class="nav-item">
                     <a href="{{ route('report.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-book-reader"></i>

@@ -96,16 +96,22 @@
                             _token: '{{ csrf_token() }}',
                         },
                         success: function(response){
-
-                            Toast.fire({
+                            if(response.success){
+                                Toast.fire({
                                     icon: 'success',
                                     title: response.message
                                 });
+                            } else {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: response.message
+                                });
+                            }
                             table.ajax.reload();
                         },
                         error: function(e){
                             Toast.fire({
-                                // icon: 'error',
+                                icon: 'error',
                                 title: e.responseJSON.message
                             });
                         }

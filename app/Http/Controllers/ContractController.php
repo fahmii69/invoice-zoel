@@ -18,16 +18,16 @@ use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\View as FacadesView;
 
-class ContractController extends Controller
+class ContractController extends BaseController
 {
     /**
      * Constructor
      */
     public function __construct(
-        protected string $title = "Contract",
         protected string $route = "contract.",
         protected string $routeView = "master_data.contract.",
     ) {
+        parent::__construct();
     }
 
     /**
@@ -37,9 +37,8 @@ class ContractController extends Controller
      */
     public function index(): View
     {
-        return view($this->routeView . "index", [
-            'title'    => $this->title,
-        ]);
+        $this->title = 'Contract';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getContract(Request $request)
@@ -74,19 +73,29 @@ class ContractController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        $title    = 'Add Contract';
-        $action   = route('contract.store');
-        $contract     = new Contract;
-        $customer = Customer::get();
-        $product  = Product::get();
-        $editProduct = "";
+        $this->title       = 'Add Contract';
+        $this->action      = route($this->route . 'store');
+        $this->contract    = new Contract;
+        $this->customer    = Customer::get();
+        $this->product     = Product::get();
+        $this->editProduct = "";
 
-        $addProduct = FacadesView::make('components.add-contract-product', compact('contract', 'product'));
-        return view('master_data.contract.form', compact('product', 'title', 'customer', 'action', 'contract', 'addProduct', 'editProduct'));
+        $this->addProduct = FacadesView::make('components.add-contract-product', $this->data);
+
+        if ($this->auth->can('contract.create')) {
+            return view('master_data.contract.form', $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -97,9 +106,6 @@ class ContractController extends Controller
      */
     public function store(StoreContractRequest $request): RedirectResponse
     {
-
-        // dd($request->all());
-
         DB::beginTransaction();
 
         try {
@@ -119,10 +125,8 @@ class ContractController extends Controller
             $contract->end_date   = $carbonEnd;
             $contract->save();
 
-            // dd($contract);
             for ($i = 0; $i < count($request->product_list); $i++) {
 
-                // dd($request->product_list[$i]);
                 $contractDetail              = new  ContractDetail;
                 $contractDetail->contract_id = $contract->id;
                 $contractDetail->product_id  = $request->product_list[$i];
@@ -157,17 +161,27 @@ class ContractController extends Controller
      */
     public function edit(Contract $contract)
     {
-        $title    = 'Edit Contract';
-        $action   = route('contract.update', $contract->id);
-        $customer = Customer::get();
-        $product  = Product::get();
-        $addProduct = FacadesView::make('components.add-contract-product', compact('contract', 'product'));
-        $editProduct = "";
-        foreach ($contract->contractDetail as $getContract) {
-            $editProduct .= FacadesView::make('components.edit-contract-product', compact('contract', 'getContract', 'product'));
+        $this->contract = $contract;
+        $this->title    = 'Edit Contract';
+        $this->action   = route('contract.update', $contract->id);
+        $this->customer = Customer::get();
+        $this->product  = Product::get();
+        $this->addProduct = FacadesView::make('components.add-contract-product', $this->data);
+        $this->editProduct = "";
+        foreach ($contract->contractDetail as $this->getContract) {
+            $this->editProduct .= FacadesView::make('components.edit-contract-product', $this->data);
         }
 
-        return view('master_data.contract.form', compact('product', 'title', 'customer', 'action', 'contract', 'addProduct', 'editProduct'));
+        if ($this->auth->can('contract.edit')) {
+            return view('master_data.contract.form', $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -196,12 +210,9 @@ class ContractController extends Controller
             $contract->end_date   = $carbonEnd;
             $contract->update();
 
-            // dd($contract);
-
             ContractDetail::where('contract_id', $contract->id)->delete();
             for ($i = 0; $i < count($request->product_list); $i++) {
 
-                // dd($request->product_list[$i]);
                 $contractDetail              = new  ContractDetail;
                 $contractDetail->contract_id = $contract->id;
                 $contractDetail->product_id  = $request->product_list[$i];
@@ -236,8 +247,12 @@ class ContractController extends Controller
      */
     public function destroy(Contract $contract): JsonResponse
     {
-        Contract::destroy($contract->id);
+        if ($this->auth->can('contract.delete')) {
+            Contract::destroy($contract->id);
 
-        return response()->json(['success' => true, 'message' => 'Contract Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Contract Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 }

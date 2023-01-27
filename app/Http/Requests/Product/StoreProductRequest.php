@@ -25,12 +25,11 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code'              => [Rule::unique('products', 'code')],
             'name'              => 'required',
             'category_id'       => 'required',
-            'buy_price'         => 'required',
+            // 'buy_price'         => 'required',
             'sale_price'        => 'required',
-            'current_inventory' => 'required',
+            // 'current_inventory' => 'required',
             'image'             => 'nullable', 'mimes:jpg,png,jpig,gif',
 
         ];
@@ -46,9 +45,9 @@ class StoreProductRequest extends FormRequest
         return [
             'name.required'              => ' Product Name must be filled in.',
             'category_id.required'       => ' Category must be filled in.',
-            'buy_price.required'         => ' Buy Price must be filled in.',
+            // 'buy_price.required'         => ' Buy Price must be filled in.',
             'sale_price.required'        => ' Sale Price must be filled in.',
-            'current_inventory.required' => ' Stock must be filled in.',
+            // 'current_inventory.required' => ' Stock must be filled in.',
         ];
     }
 }
