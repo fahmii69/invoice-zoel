@@ -122,7 +122,7 @@ class CategoryController extends BaseController
         $this->category = $category;
         $this->action   = route($this->route . 'update', $category);
 
-        if ($this->auth->can('category.create')) {
+        if ($this->auth->can('category.edit')) {
             return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(

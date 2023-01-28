@@ -17,7 +17,7 @@
     </td>
     <td>
         <div class="form-group" style="display:flex; flex:wrap;">
-            <input type="number" id="quantity" name="quantity[]" class="form-control input-text quantity"value="0">
+            <input type="number" id="quantity" name="quantity[]" class="form-control input-text quantity" placeholder="0">
         </div>
     </td>
 

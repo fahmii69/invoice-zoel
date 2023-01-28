@@ -25,13 +25,11 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code'        => [Rule::unique('products', 'code')->ignore($this->product)],
             'name'        => 'required',
             'category_id' => 'required',
-            'buy_price'   => 'required',
             'sale_price'  => 'required',
+            'unit'  => 'required',
             'image'       => 'nullable', 'mimes:jpg,png,jpig,gif',
-
         ];
     }
 
@@ -45,7 +43,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'name.required'        => ' Product Name must be filled in.',
             'category_id.required' => ' Category must be filled in.',
-            'buy_price.required'   => ' Buy Price must be filled in.',
+            'unit.required'        => ' Unit must be filled in.',
             'sale_price.required'  => ' Sale Price must be filled in.',
         ];
     }

@@ -28,6 +28,8 @@ class ContractController extends BaseController
         protected string $routeView = "master_data.contract.",
     ) {
         parent::__construct();
+
+        $this->middleware('permission:contract.index')->only('index');
     }
 
     /**
@@ -37,6 +39,8 @@ class ContractController extends BaseController
      */
     public function index(): View
     {
+        // abort_if(!$this->auth->can('contract.index'), 404);
+
         $this->title = 'Contract';
         return view($this->routeView . "index", $this->data);
     }
@@ -64,7 +68,9 @@ class ContractController extends BaseController
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('contract.edit', $data->id);
-                    return view('components.action-button', compact('data', 'route'));
+
+                    $canEdit = !$this->auth->can('contract.store');
+                    return view('components.action-button', compact('data', 'route', 'canEdit'));
                 })
                 ->make(true);
         }
@@ -87,7 +93,7 @@ class ContractController extends BaseController
         $this->addProduct = FacadesView::make('components.add-contract-product', $this->data);
 
         if ($this->auth->can('contract.create')) {
-            return view('master_data.contract.form', $this->data);
+            return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
                 'message'    => "You didn't have access to this page 😝 !!!",
@@ -157,9 +163,9 @@ class ContractController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param Contract $contract
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Contract $contract)
+    public function edit(Contract $contract): View|RedirectResponse
     {
         $this->contract = $contract;
         $this->title    = 'Edit Contract';
@@ -173,7 +179,7 @@ class ContractController extends BaseController
         }
 
         if ($this->auth->can('contract.edit')) {
-            return view('master_data.contract.form', $this->data);
+            return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
                 'message'    => "You didn't have access to this page 😝 !!!",

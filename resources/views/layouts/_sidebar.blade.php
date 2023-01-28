@@ -104,7 +104,7 @@
                     </a>
                 </li>
 
-                @can('customer.index')
+                @can('contract.index')
                 <li class="nav-item">
                     <a href="{{ route('contract.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-newspaper"></i>

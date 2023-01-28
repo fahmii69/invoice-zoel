@@ -193,6 +193,15 @@
         });
     });
 
+    $(document).on('select2:select', () => {
+        let allFound = document.querySelectorAll('.quantity');
+        $(this).one('mouseup keyup',()=>{
+            setTimeout(()=>{
+                allFound[allFound.length - 1].focus();
+            },0);
+        });
+    });
+
     $(document).on('change','.quantity',function(){
         let container = $(this).closest('tr');
         let salePrice = container.find('.sale_price').val();
@@ -241,7 +250,10 @@
                 changePrice(quantity, salePrice, container); 
             } else {
                 let salePrice = container.find('.product_list').find(':selected').attr('data-salePrice')
-                salePrice = parseFloat(salePrice)
+                if(!salePrice){
+                    salePrice = 0;
+                }
+
                 container.find('.sale_price').val(salePrice);
 
                 changePrice(quantity, salePrice, container); 
@@ -275,6 +287,9 @@
     }
 
     function changePrice(quantity, price, container){
+        if(!price){
+            price = 0;
+        }
         result = quantity * price;
 
         container.find('.text-saleTotal').html(`
@@ -361,7 +376,6 @@
         var todayDate = new Date().toISOString().slice(0, 10);
         $('#sales_date').val(todayDate);
         $('#due_date').val(todayDate);
-        console.log(todayDate);
     });
 </script>
 @endif

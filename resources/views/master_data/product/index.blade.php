@@ -12,7 +12,7 @@
                             <th>No</th>
                             <th>Product Name</th>
                             <th>Product Category</th>
-                            {{-- <th>Buy Price</th> --}}
+                            <th>Unit</th>
                             <th>Sale Price</th>
                             <th>Action</th>
                         </tr>
@@ -25,7 +25,6 @@
 <!-- /.card -->
 @endsection
 @push('js')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function () {
         var table = $('#product-dataTable').DataTable({
@@ -37,6 +36,7 @@
                     name      : 'DT_RowIndex',
                     orderable : false,
                     searchable: false,
+                    width: '5%'
                 },
                 {
                     data: 'name',
@@ -46,10 +46,10 @@
                     data: 'category_id',
                     name: 'category_id'
                 },
-                // {
-                //     data: 'buy_price',
-                //     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
-                // },
+                {
+                    data: 'unit',
+                    width: '10%'
+                },
                 {
                     data: 'sale_price',
                     render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
@@ -95,11 +95,17 @@
                             _token: '{{ csrf_token() }}',
                         },
                         success: function(response){
-                            
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.message
-                            });
+                            if(response.success){
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: response.message
+                                });
+                            } else {
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: response.message
+                                });
+                            }
                             table.ajax.reload();
                         },
                         error: function(e){

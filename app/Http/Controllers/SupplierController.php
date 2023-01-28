@@ -44,7 +44,9 @@ class SupplierController extends BaseController
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     $route = route('supplier.edit', $data->id);
-                    return view('components.action-button', compact('data', 'route'));
+                    $canEdit = $this->auth->can('supplier.store');
+
+                    return view('components.action-button', compact('data', 'route', 'canEdit'));
                 })
                 ->make(true);
         }

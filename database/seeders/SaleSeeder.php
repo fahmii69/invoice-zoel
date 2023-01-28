@@ -30,7 +30,7 @@ class SaleSeeder extends Seeder
                     'customer_id' => Customer::inRandomOrder()->first()->id,
                     'sales_date'  => Carbon::today()->subDays(rand(0, 30)),
                     'due_date'    => Carbon::today()->subDays(rand(0, 30)),
-                    'code'        => $faker->unique()->lexify('SL-?????'),
+                    'code'        => strtoupper($faker->unique()->lexify('SL-?????')),
                     'sub_total'   => $faker->numerify('###000'),
                     'grand_total' => $faker->numerify('###000'),
                     'notes'       => $faker->sentence(),

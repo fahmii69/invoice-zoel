@@ -90,18 +90,12 @@ class ProductController extends BaseController
     {
         DB::beginTransaction();
 
-        $karakter = "ABCDEVGHIJKLMNOPQRSTUVWXYZ";
-        $pin = rand(0, 9999999) . $karakter[rand(0, strlen($karakter) - 1)];
-        $string = str_shuffle($pin);
-        $code = "PDT-" . $string;
-
         try {
 
             $product = new Product($request->safe(
-                ['name', 'category_id', 'sale_price', 'buy_price', 'image']
+                ['name', 'category_id', 'unit', 'sale_price', 'image']
             ));
 
-            $product->code  = $code;
             $product->save();
 
             $stock             = new Stock();
@@ -124,7 +118,7 @@ class ProductController extends BaseController
         }
         DB::commit();
         return redirect()
-            ->route('product.index')
+            ->route($this->route . "index")
             ->with($notification);
     }
 
@@ -132,15 +126,25 @@ class ProductController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param  Product $product
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Product $product): View
+    public function edit(Product $product): View|RedirectResponse
     {
-        $title  = 'Edit Product';
-        $category = Category::get();
-        $action   = route('product.update', $product->id);
+        $this->title    = 'Edit Product';
+        $this->product  = $product;
+        $this->category = Category::get();
+        $this->action   = route('product.update', $product->id);
 
-        return view('master_data.product.form', compact('title', 'category', 'action', 'product'));
+        if ($this->auth->can('product.edit')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -157,7 +161,7 @@ class ProductController extends BaseController
         try {
 
             $product->fill($request->safe(
-                ['name', 'category_id', 'sale_price', 'buy_price', 'image']
+                ['name', 'category_id', 'sale_price', 'unit', 'image']
             ));
 
             $product->update();
@@ -176,7 +180,7 @@ class ProductController extends BaseController
         }
         DB::commit();
         return redirect()
-            ->route('product.index')
+            ->route($this->route . "index")
             ->with($notification);
     }
 
@@ -188,8 +192,12 @@ class ProductController extends BaseController
      */
     public function destroy(Product $product): JsonResponse
     {
-        Product::destroy($product->id);
+        if ($this->auth->can('product.delete')) {
+            Product::destroy($product->id);
 
-        return response()->json(['success' => true, 'message' => 'Product Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Product Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 }

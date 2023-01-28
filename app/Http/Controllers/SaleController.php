@@ -23,14 +23,25 @@ use Illuminate\Http\RedirectResponse;
 class SaleController extends BaseController
 {
     /**
+     * Constructor
+     */
+    public function __construct(
+        protected string $route = "sale.",
+        protected string $routeView = "transactions.sale.",
+
+    ) {
+        parent::__construct();
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return View
      */
     public function index(): View
     {
-        $title = 'Sale';
-        return view('transactions.sale.index', compact('title'));
+        $this->title = 'Sale';
+        return view($this->routeView . "index", $this->data);
     }
 
     public function getSale(Request $request)
@@ -44,7 +55,6 @@ class SaleController extends BaseController
                     return $data->salesDetail->pluck('product_list')->toArray();
                 })
                 ->editColumn('customer_id', function ($data) {
-                    // dd($data->category);
                     return $data->customer->name;
                 })
                 ->editColumn('sales_date', function ($data) {
@@ -68,16 +78,15 @@ class SaleController extends BaseController
      */
     public function create(): View
     {
-        $title    = 'Add Sale';
-        $action   = route('sale.store');
-        $sale     = new Sale;
-        $customer = Customer::get();
-        $product  = Product::get();
-        $editProduct = "";
+        $this->title    = 'Add Sale';
+        $this->action   = route('sale.store');
+        $this->sale     = new Sale;
+        $this->customer = Customer::get();
+        $this->product  = Product::get();
+        $this->editProduct = "";
+        $this->addProduct = FacadesView::make('components.add-sale-product', $this->data);
 
-        // $getSale = $sale->salesDetail;
-        $addProduct = FacadesView::make('components.add-sale-product', compact('sale', 'product'));
-        return view('transactions.sale.form', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct', 'editProduct'));
+        return view($this->routeView . "form", $this->data);
     }
 
     /**
@@ -132,7 +141,7 @@ class SaleController extends BaseController
         }
         DB::commit();
         return redirect()
-            ->route('sale.index')
+            ->route($this->route . "index")
             ->with($notification);
     }
 
@@ -140,21 +149,31 @@ class SaleController extends BaseController
      * Show the form for editing the specified resource.
      *
      * @param  Sale $sale
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function edit(Sale $sale): View
+    public function edit(Sale $sale): View|RedirectResponse
     {
-        $title    = 'Edit Sale';
-        $action   = route('sale.update', $sale->id);
-        $customer = Customer::get();
-        $product  = Product::get();
-        $addProduct = FacadesView::make('components.add-sale-product', compact('sale', 'product'));
-        $editProduct = "";
-        foreach ($sale->salesDetail as $getSale) {
-            $editProduct .= FacadesView::make('components.edit-sale-product', compact('sale', 'getSale', 'product'));
+        $this->title       = 'Edit Sale';
+        $this->sale        = $sale;
+        $this->action      = route('sale.update', $sale->id);
+        $this->customer    = Customer::get();
+        $this->product     = Product::get();
+        $this->addProduct  = FacadesView::make('components.add-sale-product', $this->data);
+        $this->editProduct = "";
+        foreach ($sale->salesDetail as $this->getSale) {
+            $this->editProduct .= FacadesView::make('components.edit-sale-product', $this->data);
         }
 
-        return view('transactions.sale.form', compact('product', 'title', 'customer', 'action', 'sale', 'addProduct', 'editProduct'));
+        if ($this->auth->can('sale.edit')) {
+            return view($this->routeView . "form", $this->data);
+        } else {
+            $notification = array(
+                'message'    => "You didn't have access to this page 😝 !!!",
+                'alert-type' => 'error'
+            );
+
+            return redirect()->back()->with($notification)->withInput();
+        }
     }
 
     /**
@@ -207,7 +226,7 @@ class SaleController extends BaseController
         }
         DB::commit();
         return redirect()
-            ->route('sale.index')
+            ->route($this->route . "index")
             ->with($notification);
     }
 
@@ -219,9 +238,13 @@ class SaleController extends BaseController
      */
     public function destroy(Sale $sale): JsonResponse
     {
-        Sale::destroy($sale->id);
+        if ($this->auth->can('sale.delete')) {
+            Sale::destroy($sale->id);
 
-        return response()->json(['success' => true, 'message' => 'Sale Data has been DELETED !']);
+            return response()->json(['success' => true, 'message' => 'Sale Data has been DELETED !']);
+        } else {
+            return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
+        }
     }
 
     /**
@@ -270,15 +293,16 @@ class SaleController extends BaseController
      */
     public function pdf(Sale $sale)
     {
-        $id       = $sale->id;
+        $code     = $sale->code;
         $customer = $sale->customer->name;
         $date     = $sale->sales_date;
+        $getDate = Carbon::createFromFormat("Y-m-d", $date)->format('d-M-Y');
 
         $this->sale = $sale;
 
         // return view('transactions.sale.sample', $this->data);
         $pdf = Pdf::loadView('transactions.sale.receipt', $this->data);
 
-        return $pdf->stream("invoice $id $customer $date.pdf");
+        return $pdf->stream("invoice $code $customer $getDate.pdf");
     }
 }

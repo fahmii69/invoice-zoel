@@ -67,7 +67,7 @@ class RoleSeeder extends Seeder
                 'role'       => ['Admin'],
             ],
             [
-                'name'       => 'sale.Delete',
+                'name'       => 'sale.delete',
                 'alias'      => 'Delete Sale',
                 'guard_name' => 'web',
                 'role'       => ['Admin'],

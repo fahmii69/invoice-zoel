@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="my-input"> Product Name</label>
+                                    <label for="name"> Product Name</label>
                                     <input type="text" id="name" name="name" value="{{ old('name') ?? $product->name }}"
                                         placeholder="Enter Product Name..."
                                         class="form-control @error('name') is-invalid @enderror">
@@ -33,7 +33,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="my-input">Category</label>
+                                    <label for="category">Category</label>
                                     <select name="category_id" id="category_id"
                                         class="form-control @error('category_id') is-invalid @enderror">
                                         @foreach ($category as $item)
@@ -53,12 +53,12 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="my-input">Buy Price</label>
+                                    <label for="unit">Unit</label>
 
-                                    <input type="number" value="{{ old('buy_price') ?? $product->buy_price }}"
-                                        name="buy_price" id="buy_price"
-                                        class="form-control @error('buy_price') is-invalid @enderror">
-                                    @error('buy_price')
+                                    <input type="text" value="{{ old('unit') ?? $product->unit }}"
+                                        name="unit" id="unit"
+                                        class="form-control @error('unit') is-invalid @enderror">
+                                    @error('unit')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
@@ -68,11 +68,11 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="my-input">Sale Price</label>
+                                    <label for="sale_price">Sale Price</label>
 
-                                    <input type="number" value="{{ old('sale_price') ?? $product->sale_price }}"
+                                <input type="text" value="{{ old('sale_price') ?? $product->sale_price }}"
                                         name="sale_price" id="sale_price"
-                                        class="form-control @error('sale_price') is-invalid @enderror">
+                                        class="sale_price form-control @error('sale_price') is-invalid @enderror">
                                     @error('sale_price')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -97,8 +97,7 @@
                             <div class="form-group col-md-6">
                                 <label>Stock</label>
                                 <input type="number" class="input-value input-noVariant form-control @error('current_inventory') is-invalid @enderror"
-                                name="current_inventory" id="current_inventory"
-                                >
+                                name="current_inventory" id="current_inventory" value="0" readonly>
                                 @error('current_inventory')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -120,6 +119,17 @@
 @endsection
 @push('js')
 <script>
+
+    $('.sale_price').inputmask({
+        'alias'             : 'decimal',
+        'prefix'            : 'Rp. ',
+        'groupSeparator'    : ',',
+        'autoGroup'         : true,
+        'digits'            : 2,
+        'digitsOptional'    : false,
+        'removeMaskOnSubmit': true,
+    });
+
     $('#category_id').select2({
         placeholder: '-- Select Category --',
         allowClear: true
