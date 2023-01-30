@@ -29,7 +29,7 @@ class ContractController extends BaseController
     ) {
         parent::__construct();
 
-        $this->middleware('permission:contract.index')->only('index');
+        // $this->middleware('permission:contract.index')->only('index');
     }
 
     /**
@@ -39,7 +39,7 @@ class ContractController extends BaseController
      */
     public function index(): View
     {
-        // abort_if(!$this->auth->can('contract.index'), 404);
+        abort_if(!$this->auth->can('contract.index'), 404);
 
         $this->title = 'Contract';
         return view($this->routeView . "index", $this->data);
@@ -55,10 +55,7 @@ class ContractController extends BaseController
                     return $data->customer->name;
                 })
                 ->addColumn('contract_product', function ($data) {
-                    return $data->contractDetail->pluck('contract_product')->toArray();
-                })
-                ->addColumn('contract_price', function ($data) {
-                    return $data->contractDetail->pluck('contract_price')->toArray();
+                    return $data->contractDetail->pluck('product_with_price')->toArray();
                 })
                 ->editColumn('start_date', function ($data) {
                     return Carbon::parse($data->start_date)->format('d-M-Y');
@@ -69,8 +66,10 @@ class ContractController extends BaseController
                 ->addColumn('action', function ($data) {
                     $route = route('contract.edit', $data->id);
 
-                    $canEdit = !$this->auth->can('contract.store');
-                    return view('components.action-button', compact('data', 'route', 'canEdit'));
+                    $canEdit = $this->auth->can('contract.edit');
+                    $canDelete = $this->auth->can('contract.delete');
+
+                    return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })
                 ->make(true);
         }

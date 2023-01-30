@@ -3,18 +3,16 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
-        <x-create-button route="{{route('sale.create')}}" title=Sale />
+        <x-create-button route="{{ route('user.create') }}" title=User />
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="sale-dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="user-dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Product</th>
-                            <th>Customer</th>
-                            <th>Sale Date</th>
-                            <th>Due Date</th>
-                            <th>Sale Price</th>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -28,42 +26,34 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        var table = $('#sale-dataTable').DataTable({
+        var table = $('#user-dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('sale.list') }}",
+            ajax: "{{ route('user.list') }}",
             columns: [{
-                    data      : 'DT_RowIndex',
-                    name      : 'DT_RowIndex',
-                    orderable : false,
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
                     searchable: false,
                 },
                 {
-                    data: 'product_list',
-                    name: 'product_list'
+                    data: 'name',
+                    name: 'name',
                 },
                 {
-                    data: 'customer_id',
-                    name: 'customer_id'
+                    data: 'email',
+                    name: 'email',
                 },
                 {
-                    data: 'sales_date',
-                    name: 'sales_date'
-                },
-                {
-                    data: 'due_date',
-                    name: 'due_date'
-                },
-                {
-                    data: 'grand_total',
-                    render: $.fn.dataTable.render.number( ',', '.', 2, 'Rp. ' ),
+                    data: 'role',
+                    name: 'role',
                 },
                 {
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false,
-                    width: '15%'
+                    width: '10%'
                 },
             ]
         });
@@ -89,7 +79,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.value) {
-                    let url = '{{ route('sale.destroy', ':id') }}';
+                    let url = '{{ route('user.destroy', ':id') }}';
                         url = url.replace(':id', id);
 
                     $.ajax({
@@ -114,7 +104,7 @@
                         },
                         error: function(e){
                             Toast.fire({
-                                icon: 'error',
+                                // icon: 'error',
                                 title: e.responseJSON.message
                             });
                         }
@@ -123,5 +113,6 @@
             })
         })
     });
+
 </script>
 @endpush

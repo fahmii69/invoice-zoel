@@ -12,12 +12,18 @@ class SaleDetail extends Model
 
     protected $guarded = [];
     protected $append = [
-        'product_list'
+        'product_list',
+        'name_with_qty',
     ];
 
     public function getProductListAttribute()
     {
         return $this->product?->name;
+    }
+
+    public function getNameWithQtyAttribute()
+    {
+        return $this->product?->name . "(" . number_format($this->quantity) . ") ";
     }
 
     public function sale(): BelongsTo

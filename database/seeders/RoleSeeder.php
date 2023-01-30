@@ -163,6 +163,18 @@ class RoleSeeder extends Seeder
                 'role'       => ['Admin'],
             ],
             [
+                'name'       => 'customer.create',
+                'alias'      => 'Create Customer',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'customer.store',
+                'alias'      => 'Store Customer',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
                 'name'       => 'customer.edit',
                 'alias'      => 'Edit Customer',
                 'guard_name' => 'web',
@@ -213,6 +225,36 @@ class RoleSeeder extends Seeder
             [
                 'name'       => 'contract.delete',
                 'alias'      => 'Delete Contract',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'user.create',
+                'alias'      => 'Create User',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'user.store',
+                'alias'      => 'Store User',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'user.edit',
+                'alias'      => 'Edit User',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'user.update',
+                'alias'      => 'Update User',
+                'guard_name' => 'web',
+                'role'       => ['Admin'],
+            ],
+            [
+                'name'       => 'user.delete',
+                'alias'      => 'Delete User',
                 'guard_name' => 'web',
                 'role'       => ['Admin'],
             ],

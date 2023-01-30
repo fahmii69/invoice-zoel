@@ -14,6 +14,7 @@ class ContractDetail extends Model
     protected $append = [
         'contract_product',
         'contract_price',
+        'product_with_price'
     ];
 
     public function getContractProductAttribute()
@@ -24,6 +25,11 @@ class ContractDetail extends Model
     public function getContractPriceAttribute()
     {
         return rupiah($this->price);
+    }
+
+    public function getProductWithPriceAttribute()
+    {
+        return $this->product?->name . "(" . rupiah($this->price) . ") ";
     }
 
     public function contract()

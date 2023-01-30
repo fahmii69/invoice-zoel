@@ -50,7 +50,11 @@ class ProductController extends BaseController
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('product.edit', $data->id);
-                    return view('components.action-button', compact('data', 'route'));
+
+                    $canEdit = $this->auth->can('product.edit');
+                    $canDelete = $this->auth->can('product.delete');
+
+                    return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })
                 ->make(true);
         }
@@ -90,32 +94,41 @@ class ProductController extends BaseController
     {
         DB::beginTransaction();
 
-        try {
+        if ($this->auth->can('product.store')) {
+            try {
 
-            $product = new Product($request->safe(
-                ['name', 'category_id', 'unit', 'sale_price', 'image']
-            ));
+                $product = new Product($request->safe(
+                    ['name', 'category_id', 'unit', 'sale_price', 'image']
+                ));
 
-            $product->save();
+                $product->save();
 
-            $stock             = new Stock();
-            $stock->product_id = $product->id;
-            $stock->quantity   = $request->current_inventory;
-            $stock->save();
+                $stock             = new Stock();
+                $stock->product_id = $product->id;
+                $stock->quantity   = $request->current_inventory;
+                $stock->save();
 
-            $notification = array(
-                'message'    => 'Product data has been Added!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $notification = array(
+                    'message'    => 'Product data has been Added!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")
@@ -158,26 +171,35 @@ class ProductController extends BaseController
     {
         DB::beginTransaction();
 
-        try {
+        if ($this->auth->can('product.update')) {
+            try {
 
-            $product->fill($request->safe(
-                ['name', 'category_id', 'sale_price', 'unit', 'image']
-            ));
+                $product->fill($request->safe(
+                    ['name', 'category_id', 'sale_price', 'unit', 'image']
+                ));
 
-            $product->update();
-            $notification = array(
-                'message'    => 'Product data has been Updated!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $product->update();
+                $notification = array(
+                    'message'    => 'Product data has been Updated!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")

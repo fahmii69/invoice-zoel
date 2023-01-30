@@ -5,7 +5,8 @@
                 @foreach ($product as $item)
                 <option></option>
                 <option value="{{$item->id}}" 
-                data-salePrice="{{ $item->sale_price }}">{{$item->name}}</option>
+                data-salePrice="{{ $item->sale_price }}"
+                data-productUnit="{{ $item->unit }}">{{$item->name}}</option>
                 @endforeach
             </select>
             @error('product_list')
@@ -13,6 +14,12 @@
                 {{ $message }}
             </div>
             @enderror
+        </div>
+    </td>
+    <td>
+        <div class="form-group" style="display:flex; flex:wrap;">
+
+            <input type="text" readonly id="text-productUnit" name="text-productUnit[]" class="form-control text-productUnit">
         </div>
     </td>
     <td>

@@ -15,7 +15,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="sales_date">Sales Date</label>
-                            <input type="date" name="sales_date" id="sales_date"
+                            <input type="date" name="sales_date" id="sales_date" required
                                 class="sales_date form-control @error('sales_date') is-invalid @enderror"
                                 value="{{ old('sales_date') ?? $sale->sales_date }}">
                             @error('sales_date')
@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-md-4">
                         <label for="customer_id">Customer</label>
-                        <select name="customer_id" id="customer_id"
+                        <select name="customer_id" id="customer_id" required
                             class="customer_id form-control @error('customer_id') is-invalid @enderror">
                             @foreach ($customer as $item)
                             <option></option>
@@ -47,7 +47,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="due_date">Due Date</label>
-                            <input type="date" name="due_date" id="due_date" readonly
+                            <input type="date" name="due_date" id="due_date" readonly required
                                 class="due_date form-control @error('due_date') is-invalid @enderror"
                                 value="{{ old('due_date') ?? $sale->due_date }}">
                             @error('due_date')
@@ -58,13 +58,17 @@
                         </div>
                     </div>
                 </div>
-
-
+                @if ($sale->id)
+                <div class="float-right">
+                    <a href="{{ route('sale.pdf',$sale->id) }}" target="_blank" class="btn btn-primary btn-print"><i class="fa fa-print me-1"></i>Print</a>
+                </div>  
+                <br>
+                @endif
                 <div class="form-group mt-4 table-responsive">
                     <table class="table" width="100%">
                         <thead>
                             <th style="width: 500px">Product</th>
-                            {{-- <th>Curent Inventory </th> --}}
+                            <th style="width: 100px">Unit </th>
                             <th>Quantity </th>
                             <th>Price</th>
                             <th>Sub_Total</th>
@@ -156,11 +160,14 @@
     $(document).on('change','.product_list', async function(){
         // isModifier=$(this).val()
         let container = $(this).closest('tr');
+        let productUnit = $(this).find(':selected').attr('data-productUnit')
         let quantity  = container.find('.quantity').val();
         let salePrice = $(this).find(':selected').attr('data-salePrice')
+
             salePrice = parseFloat(salePrice)
         let productId = $(this).val();
 
+        console,
         contractProducts = await getContractPrice();
 
         let index = contractProducts.findIndex(x => x.product_id == productId);
@@ -171,6 +178,8 @@
         }
         
         changePrice(quantity, salePrice, container);
+        $(this).closest('tr').find('.text-productUnit').val(productUnit);
+        console.log(productUnit);
         $(this).closest('tr').find('.sale_price').val(salePrice);
     });
 

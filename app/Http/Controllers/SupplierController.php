@@ -44,9 +44,10 @@ class SupplierController extends BaseController
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     $route = route('supplier.edit', $data->id);
-                    $canEdit = $this->auth->can('supplier.store');
+                    $canEdit = $this->auth->can('supplier.edit');
+                    $canDelete = $this->auth->can('supplier.delete');
 
-                    return view('components.action-button', compact('data', 'route', 'canEdit'));
+                    return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })
                 ->make(true);
         }
@@ -84,25 +85,34 @@ class SupplierController extends BaseController
     {
         DB::beginTransaction();
 
-        try {
-            $supplier = new Supplier($request->safe(
-                ['name', 'address', 'phone', 'pic']
-            ));
+        if ($this->auth->can('supplier.store')) {
+            try {
+                $supplier = new Supplier($request->safe(
+                    ['name', 'address', 'phone', 'pic']
+                ));
 
-            $supplier->save();
+                $supplier->save();
 
-            $notification = array(
-                'message'    => 'Supplier data has been added!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $notification = array(
+                    'message'    => 'Supplier data has been added!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
         DB::commit();
         return redirect()
@@ -143,26 +153,36 @@ class SupplierController extends BaseController
     public function update(UpdateSupplierRequest $request, Supplier $supplier): RedirectResponse
     {
         DB::beginTransaction();
-        try {
-            $supplier->fill($request->safe(
-                ['name', 'address', 'phone', 'pic']
-            ));
 
-            $supplier->update();
+        if ($this->auth->can('supplier.update')) {
+            try {
+                $supplier->fill($request->safe(
+                    ['name', 'address', 'phone', 'pic']
+                ));
 
-            $notification = array(
-                'message'    => 'Supplier data has been updated!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $supplier->update();
+
+                $notification = array(
+                    'message'    => 'Supplier data has been updated!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")

@@ -52,7 +52,7 @@ class SaleController extends BaseController
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('product_list', function ($data) {
-                    return $data->salesDetail->pluck('product_list')->toArray();
+                    return $data->salesDetail->pluck('name_with_qty')->toArray();
                 })
                 ->editColumn('customer_id', function ($data) {
                     return $data->customer->name;
@@ -65,7 +65,10 @@ class SaleController extends BaseController
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('sale.edit', $data->id);
-                    return view('components.sale-action-button', compact('data', 'route'));
+                    $canEdit = $this->auth->can('supplier.edit');
+                    $canDelete = $this->auth->can('supplier.delete');
+
+                    return view('components.sale-action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })
                 ->make(true);
         }
@@ -114,15 +117,16 @@ class SaleController extends BaseController
             $sale->grand_total  = $request->sub_total + $request->tax;
             $sale->save();
 
+            // dd($request->product_list, count($request->product_list));
             for ($i = 0; $i < count($request->product_list); $i++) {
                 $price    = str_replace(",", "", $request->sale_price[$i]);
 
                 $saleDetail             = new  SaleDetail;
                 $saleDetail->sales_id   = $sale->id;
                 $saleDetail->product_id = $request->product_list[$i];
-                $saleDetail->quantity = $request->quantity[$i];
-                $saleDetail->price   = $price;
-                $saleDetail->total   = $request->quantity[$i] * $price;
+                $saleDetail->quantity   = $request->quantity[$i];
+                $saleDetail->price      = $price;
+                $saleDetail->total      = $request->quantity[$i] * $price;
                 $saleDetail->save();
             }
 
@@ -187,43 +191,51 @@ class SaleController extends BaseController
     {
         DB::beginTransaction();
 
+        if ($this->auth->can('sale.update')) {
+            try {
 
-        try {
-
-            $sale->fill($request->safe(
-                ['sales_date', 'due_date', 'customer_id', 'sub_total',]
-            ));
+                $sale->fill($request->safe(
+                    ['sales_date', 'due_date', 'customer_id', 'sub_total',]
+                ));
 
 
-            $sale->grand_total  = $request->sub_total + $request->tax;
-            $sale->update();
+                $sale->grand_total  = $request->sub_total + $request->tax;
+                $sale->update();
 
-            SaleDetail::where('sales_id', $sale->id)->delete();
-            for ($i = 0; $i < count($request->product_list); $i++) {
-                $price    = str_replace(",", "", $request->sale_price[$i]);
+                SaleDetail::where('sales_id', $sale->id)->delete();
+                for ($i = 0; $i < count($request->product_list); $i++) {
+                    $price    = str_replace(",", "", $request->sale_price[$i]);
 
-                $saleDetail             = new  SaleDetail;
-                $saleDetail->sales_id   = $sale->id;
-                $saleDetail->product_id = $request->product_list[$i];
-                $saleDetail->quantity = $request->quantity[$i];
-                $saleDetail->price   = $price;
-                $saleDetail->total   = $request->quantity[$i] * $price;
-                $saleDetail->save();
+                    $saleDetail             = new  SaleDetail;
+                    $saleDetail->sales_id   = $sale->id;
+                    $saleDetail->product_id = $request->product_list[$i];
+                    $saleDetail->quantity = $request->quantity[$i];
+                    $saleDetail->price   = $price;
+                    $saleDetail->total   = $request->quantity[$i] * $price;
+                    $saleDetail->save();
+                }
+
+                $notification = array(
+                    'message'    => 'Sale data has been Added!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
             }
-
-            $notification = array(
-                'message'    => 'Sale data has been Added!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")

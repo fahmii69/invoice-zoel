@@ -22,7 +22,6 @@
 <!-- /.card -->
 @endsection
 @push('js')
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function () {
         var table = $('#stock-dataTable').DataTable({

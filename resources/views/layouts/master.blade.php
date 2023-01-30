@@ -15,7 +15,7 @@
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('AdminLTE/dist/css/adminlte.min.css?v=2') }}">
     <link rel="stylesheet" href="{{ asset('AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{  asset('AdminLTE/plugins/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{  asset('AdminLTE/plugins/select2/css/select2.min.css') }}">

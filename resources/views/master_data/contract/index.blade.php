@@ -12,7 +12,6 @@
                             <th>No</th>
                             <th>Customer</th>
                             <th>Product Name</th>
-                            <th>Product Price</th>
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Action</th>
@@ -45,10 +44,6 @@
                 {
                     data: 'contract_product',
                     name: 'contract_product'
-                },
-                {
-                    data: 'contract_price',
-                    name: 'contract_price'
                 },
                 {
                     data: 'start_date',

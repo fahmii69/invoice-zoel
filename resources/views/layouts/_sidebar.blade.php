@@ -118,6 +118,12 @@
                         <p>Report</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('user.index') }}" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>User</p>
+                    </a>
+                </li>
 				{{-- /Master Data --}}
             </ul>
         </nav>

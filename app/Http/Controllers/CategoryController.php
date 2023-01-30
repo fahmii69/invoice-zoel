@@ -45,7 +45,9 @@ class CategoryController extends BaseController
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     $route = route('category.edit', $data->id);
-                    return view('components.action-button', compact('data', 'route'));
+                    $canEdit = $this->auth->can('category.edit');
+                    $canDelete = $this->auth->can('category.delete');
+                    return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })
                 ->make(true);
         }
@@ -84,26 +86,35 @@ class CategoryController extends BaseController
     {
         DB::beginTransaction();
 
-        try {
-            $supplier = new Category($request->safe(
-                ['name']
-            ));
+        if ($this->auth->can('category.store')) {
+            try {
+                $supplier = new Category($request->safe(
+                    ['name']
+                ));
 
-            $supplier->save();
+                $supplier->save();
 
-            $notification = array(
-                'message'    => 'Category data has been added!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $notification = array(
+                    'message'    => 'Category data has been added!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")
@@ -144,26 +155,36 @@ class CategoryController extends BaseController
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
         DB::beginTransaction();
-        try {
-            $category->fill($request->safe(
-                ['name', 'address', 'phone', 'pic']
-            ));
 
-            $category->update();
+        if ($this->auth->can('category.update')) {
+            try {
+                $category->fill($request->safe(
+                    ['name', 'address', 'phone', 'pic']
+                ));
 
-            $notification = array(
-                'message'    => 'Category data has been updated!',
-                'alert-type' => 'success'
-            );
-        } catch (Exception $e) {
+                $category->update();
+
+                $notification = array(
+                    'message'    => 'Category data has been updated!',
+                    'alert-type' => 'success'
+                );
+            } catch (Exception $e) {
+                DB::rollBack();
+                $notification = array(
+                    'message'    => $e->getMessage(),
+                    'alert-type' => 'error'
+                );
+
+                return redirect()->back()->with($notification)->withInput();
+            }
+        } else {
             DB::rollBack();
             $notification = array(
-                'message'    => $e->getMessage(),
+                'message'    => "You didn't have access to input on this page 😝 !!!",
                 'alert-type' => 'error'
             );
-
-            return redirect()->back()->with($notification)->withInput();
         }
+
         DB::commit();
         return redirect()
             ->route($this->route . "index")

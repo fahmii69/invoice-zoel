@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +55,9 @@ Route::group([
 
     Route::get('/customer/get', [CustomerController::class, 'getcustomer'])->name('customer.list');
     Route::resource('customer', CustomerController::class);
+
+    Route::get('/user/get', [UserController::class, 'getUser'])->name('user.list');
+    Route::resource('user', UserController::class);
 
     Route::get('/stock/get', [StockController::class, 'getStock'])->name('stock.list');
     Route::resource('stock', StockController::class);

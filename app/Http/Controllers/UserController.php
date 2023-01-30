@@ -2,25 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Customer\StoreCustomerRequest;
-use App\Http\Requests\Customer\UpdateCustomerRequest;
-use App\Models\Customer;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
-class CustomerController extends BaseController
+class UserController extends BaseController
 {
     /**
      * Constructor
      */
     public function __construct(
-        protected string $route = "customer.",
-        protected string $routeView = "master_data.customer.",
+        protected string $route = "user.",
+        protected string $routeView = "master_data.user.",
     ) {
         parent::__construct();
     }
@@ -32,26 +34,26 @@ class CustomerController extends BaseController
      */
     public function index(): View
     {
-        $this->title = 'Customer';
+        $this->title = 'User';
         return view($this->routeView . "index", $this->data);
     }
 
-    public function getCustomer(Request $request)
+    public function getUser(Request $request)
     {
         if ($request->ajax()) {
-            $data = Customer::latest('id');
+            $data = User::oldest('id');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $route = route('customer.edit', $data->id);
-                    $canEdit = $this->auth->can('customer.edit');
-                    $canDelete = $this->auth->can('customer.delete');
+                    $route = route('user.edit', $data->id);
+                    $canEdit = $this->auth->can('user.edit');
+                    $canDelete = $this->auth->can('user.delete');
+                    // $canDelete = true;
 
-                    return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
-                })
-                ->editColumn('payment_terms', function ($data) {
-                    if ($data->payment_terms > 0) {
-                        return $data->payment_terms;
+
+                    if ($data->id == 1) {
+                    } else {
+                        return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                     }
                 })
                 ->make(true);
@@ -65,11 +67,12 @@ class CustomerController extends BaseController
      */
     public function create(): View|RedirectResponse
     {
-        $this->title    = "Add Customer";
-        $this->customer = new Customer();
-        $this->action   = route($this->route . 'store');
+        $this->title  = "Add User";
+        $this->user   = new User();
+        $this->roles   = Role::get();
+        $this->action = route($this->route . 'store');
 
-        if ($this->auth->can('customer.create')) {
+        if ($this->auth->can('user.create')) {
             return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
@@ -84,34 +87,36 @@ class CustomerController extends BaseController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreCustomerRequest $request
+     * @param  StoreUserRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreCustomerRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         DB::beginTransaction();
 
-        if ($this->auth->can('customer.store')) {
+        if ($this->auth->can('user.store')) {
             try {
-                $customer = new Customer($request->safe(
+                $user = new User($request->safe(
                     [
                         'name',
-                        'address',
-                        'state',
-                        'province',
-                        'postcode',
-                        'country',
-                        'work_phone',
-                        'payment_terms',
-                        'customer_type',
-                        'send_reminders'
+                        'email',
+                        'password',
                     ]
                 ));
 
-                $customer->save();
+                $getRole = Role::find($request->role);
+                $role = match ($getRole->id) {
+                    1 => $user->role = "Admin",
+                    2 => $user->role = "User",
+                };
+
+
+                $user->save();
+
+                $user->syncRoles([$role]);
 
                 $notification = array(
-                    'message'    => 'Customer data has been added!',
+                    'message'    => 'User data has been added!',
                     'alert-type' => 'success'
                 );
             } catch (Exception $e) {
@@ -140,16 +145,17 @@ class CustomerController extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Customer $customer
+     * @param  User $user
      * @return View|RedirectResponse
      */
-    public function edit(Customer $customer): View|RedirectResponse
+    public function edit(User $user): View|RedirectResponse
     {
-        $this->title    = "Edit Customer";
-        $this->customer = $customer;
-        $this->action   = route($this->route . 'update', $customer);
+        $this->title  = "Edit User";
+        $this->user   = $user;
+        $this->roles  = Role::get();
+        $this->action = route($this->route . 'update', $user);
 
-        if ($this->auth->can('customer.edit')) {
+        if ($this->auth->can('user.edit')) {
             return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
@@ -163,35 +169,39 @@ class CustomerController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateCustomerRequest $request
-     * @param  Customer $customer
+     * @param  UpdateUserRequest $request
+     * @param  User $user
      * @return RedirectResponse
      */
-    public function update(UpdateCustomerRequest $request, Customer $customer): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         DB::beginTransaction();
 
-        if ($this->auth->can('customer.update')) {
+        if ($this->auth->can('user.update')) {
             try {
-                $customer->fill($request->safe(
+                $user->fill($request->safe(
                     [
                         'name',
-                        'address',
-                        'state',
-                        'province',
-                        'postcode',
-                        'country',
-                        'work_phone',
-                        'payment_terms',
-                        'customer_type',
-                        'send_reminders'
+                        'email',
                     ]
                 ));
 
-                $customer->update();
+                if ($request->password) {
+                    $user->password = $request->password;
+                }
+
+                $getRole = Role::find($request->role);
+                $role = match ($getRole->id) {
+                    1 => $user->role = "Admin",
+                    2 => $user->role = "User",
+                };
+
+                $user->update();
+
+                $user->syncRoles([$role]);
 
                 $notification = array(
-                    'message'    => 'Customer data has been updated!',
+                    'message'    => 'User data has been updated!',
                     'alert-type' => 'success'
                 );
             } catch (Exception $e) {
@@ -220,15 +230,23 @@ class CustomerController extends BaseController
     /**
      * Delete data.
      *
-     * @param Customer $customer
+     * @param User $user
      * @return JsonResponse
      */
-    public function destroy(Customer $customer): JsonResponse
+    public function destroy(User $user): JsonResponse
     {
-        if ($this->auth->can('customer.delete')) {
-            Customer::destroy($customer->id);
+        if ($this->auth->can('user.delete')) {
 
-            return response()->json(['success' => true, 'message' => 'Customer Data has been DELETED !']);
+            $validation = Gate::inspect('adminDelete', [$user, $user->id]);
+
+            if ($validation->allowed()) {
+                $validation = User::destroy($user->id);
+                return response()->json(['success' => true, 'message' => 'User Data has been DELETED !']);
+            } else {
+                $message = $validation->message();
+
+                return response()->json(['success' => false, 'message' => $message]);
+            }
         } else {
             return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
         }
