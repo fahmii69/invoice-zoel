@@ -27,7 +27,6 @@
 
 <!-- ChartJS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{{-- <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script> --}}
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 <!-- Custom JS -->
@@ -45,15 +44,16 @@
 
     /** add active class and stay opened when selected */
     var url = window.location;
+    var dashboard = `{{ request()->path() }}`;
 
     // for sidebar menu entirely but not cover treeview
     $('ul.nav-sidebar a').filter(function() {
-        return this.href == url;
+        return this.href + (dashboard == '/' ? '/' : "") == url.href;
     }).addClass('active');
 
     // for treeview
     $('ul.nav-treeview a').filter(function() {
-        return this.href == url;
+        return this.href + (dashboard == '/' ? '/' : "") == url.href;
     }).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
 
     const Toast = Swal.mixin({

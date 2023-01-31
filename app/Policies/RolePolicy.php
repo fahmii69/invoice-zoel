@@ -3,11 +3,11 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Access\Response;
+use Spatie\Permission\Models\Role;
 
-class UserPolicy
+class RolePolicy
 {
     use HandlesAuthorization;
 
@@ -25,17 +25,17 @@ class UserPolicy
      * make policy for delete user (avoid wrong delete user account).
      *
      * @param User|null $user
-     * @param User $id
+     * @param Role $role
      * @return Response
      */
-    public function adminDelete(User $user, User $id): Response
+    public function roleDelete(?User $user, Role $role)
     {
-        if ($id->id == 1) {
-            return Response::deny("This Account Can't be deleted 😂");
+        if ($role->id == 1) {
+            return Response::deny("This Role Can't be deleted 😂");
         }
 
-        if ($id->id == 2) {
-            return Response::deny("This Account Can't be deleted 😂");
+        if ($role->id == 2) {
+            return Response::deny("This Role Can't be deleted 😂");
         }
 
         return Response::allow();

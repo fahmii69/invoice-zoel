@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
@@ -24,12 +25,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group([
-    'middleware' => ['auth:sanctum', 'verified'],
+    'middleware' => ['auth:sanctum'],
 ], function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -65,12 +63,12 @@ Route::group([
     Route::get('/contract/get', [ContractController::class, 'getContract'])->name('contract.list');
     Route::resource('contract', ContractController::class);
 
+    Route::get('/role/get', [RoleController::class, 'getRole'])->name('role.list');
+    Route::resource('role', RoleController::class);
+
     Route::post('/report/get/total', [ReportController::class, 'getTotalSalesQuantity'])->name('report.getTotalSalesQuantity');
     Route::get('/report/export', [ReportController::class, 'export'])->name('report.export');
     Route::resource('report', ReportController::class);
 });
-
-// Route::middleware('auth')->group(function () {
-// });
 
 require __DIR__ . '/auth.php';

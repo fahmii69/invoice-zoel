@@ -28,6 +28,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected $appends = [
+        'role_name'
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -71,5 +75,10 @@ class User extends Authenticatable
                 return Hash::needsRehash($value) ? Hash::Make($value) : $value;
             }
         );
+    }
+
+    protected function getRoleNameAttribute()
+    {
+        return $this->getRoleNames();
     }
 }

@@ -3,20 +3,18 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
-        <x-create-button route="{{ route('user.create') }}" title=User />
+        <x-create-button route="{{ route('role.create') }}" title=Role />
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="user-dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="role-dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Action</th>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th width="280px">Action</th>
                         </tr>
                     </thead>
-                </table>
+                  </table>
             </div>
         </div>
     </div>
@@ -26,10 +24,10 @@
 @push('js')
 <script>
     $(document).ready(function () {
-        var table = $('#user-dataTable').DataTable({
+        var table = $('#role-dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('user.list') }}",
+            ajax: "{{ route('role.list') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -39,14 +37,6 @@
                 {
                     data: 'name',
                     name: 'name',
-                },
-                {
-                    data: 'email',
-                    name: 'email',
-                },
-                {
-                    data: 'role_name',
-                    name: 'role_name',
                 },
                 {
                     data: 'action',
@@ -79,7 +69,7 @@
                 cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.value) {
-                    let url = '{{ route('user.destroy', ':id') }}';
+                    let url = '{{ route('role.destroy', ':id') }}';
                         url = url.replace(':id', id);
 
                     $.ajax({
@@ -113,6 +103,5 @@
             })
         })
     });
-
 </script>
 @endpush

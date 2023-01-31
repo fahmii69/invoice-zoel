@@ -21,6 +21,8 @@ class DashboardController extends BaseController
      */
     public function index(): View
     {
+
+        // dd(request()->path());
         $this->title    = "Dashboard";
         $this->product  = Product::get();
         $this->sale     = Sale::get();

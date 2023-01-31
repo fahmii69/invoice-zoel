@@ -2,30 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\DataTables;
 
-class UserController extends BaseController
+class RoleController extends BaseController
 {
     /**
-     * Constructor
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function __construct(
-        protected string $route = "user.",
-        protected string $routeView = "master_data.user.",
+    function __construct(
+        protected string $route = "role.",
+        protected string $routeView = "master_data.role.",
     ) {
         parent::__construct();
-        // $this->middleware('permission:user.index')->only('index');
+        // $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
+        // $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+        // $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
+        // $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -35,23 +39,22 @@ class UserController extends BaseController
      */
     public function index(): View
     {
-        abort_if(!$this->auth->can('user.index'), 404);
-        $this->title = 'User';
+        abort_if(!$this->auth->can('role.index'), 404);
+        $this->title = 'Role';
 
         return view($this->routeView . "index", $this->data);
     }
 
-    public function getUser(Request $request)
+    public function getRole(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::oldest('id');
+            $data = Role::oldest('id');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $route = route('user.edit', $data->id);
-                    $canEdit = $this->auth->can('user.edit');
-                    $canDelete = $this->auth->can('user.delete');
-
+                    $route = route('role.edit', $data->id);
+                    $canEdit = $this->auth->can('role.edit');
+                    $canDelete = $this->auth->can('role.delete');
                     if ($data->id == 1) {
                     } else {
                         return view('components.action-button', compact('data', 'route', 'canEdit', 'canDelete'));
@@ -68,12 +71,13 @@ class UserController extends BaseController
      */
     public function create(): View|RedirectResponse
     {
-        $this->title  = "Add User";
-        $this->user   = new User();
-        $this->roles   = Role::get();
-        $this->action = route($this->route . 'store');
+        $this->title      = "Add Role";
+        $permission       = Permission::orderBy('type', 'asc')->get();
+        $this->permission = $permission;
+        $this->role       = new Role();
+        $this->action     = route($this->route . 'store');
 
-        if ($this->auth->can('user.create')) {
+        if ($this->auth->can('role.create')) {
             return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
@@ -88,36 +92,26 @@ class UserController extends BaseController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreUserRequest $request
+     * @param  Request  $request
      * @return RedirectResponse
      */
-    public function store(StoreUserRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         DB::beginTransaction();
 
-        if ($this->auth->can('user.store')) {
+        if ($this->auth->can('role.store')) {
             try {
-                $user = new User($request->safe(
-                    [
-                        'name',
-                        'email',
-                        'password',
-                    ]
-                ));
 
-                $getRole = Role::find($request->role);
-                // $role = match ($getRole->id) {
-                //     1 => $user->role = "Admin",
-                //     2 => $user->role = "User",
-                // };
+                $this->validate($request, [
+                    'name' => 'required|unique:roles,name',
+                ]);
 
+                $role = Role::create(['guard_name' => 'web', 'name' => $request->input('name')]);
 
-                $user->save();
-
-                $user->syncRoles([$getRole->name]);
+                $role->syncPermissions($request->input('permission'));
 
                 $notification = array(
-                    'message'    => 'User data has been added!',
+                    'message'    => 'Role data has been added!',
                     'alert-type' => 'success'
                 );
             } catch (Exception $e) {
@@ -136,7 +130,6 @@ class UserController extends BaseController
                 'alert-type' => 'error'
             );
         }
-
         DB::commit();
         return redirect()
             ->route($this->route . "index")
@@ -146,17 +139,20 @@ class UserController extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  User $user
+     * @param  Role $role
      * @return View|RedirectResponse
      */
-    public function edit(User $user): View|RedirectResponse
+    public function edit(Role $role): View|RedirectResponse
     {
-        $this->title  = "Edit User";
-        $this->user   = $user;
-        $this->roles  = Role::get();
-        $this->action = route($this->route . 'update', $user);
+        $this->title           = "Edit Role";
+        $this->permission      = Permission::orderBy('type', 'asc')->get();
+        $this->role            = $role;
+        $this->action          = route($this->route . 'update', $role);
+        $this->rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $role->id)
+            ->pluck('role_has_permissions.permission_id')
+            ->all();
 
-        if ($this->auth->can('user.edit')) {
+        if ($this->auth->can('role.edit')) {
             return view($this->routeView . "form", $this->data);
         } else {
             $notification = array(
@@ -170,39 +166,27 @@ class UserController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateUserRequest $request
-     * @param  User $user
+     * @param  Request  $request
+     * @param  Role $role
      * @return RedirectResponse
      */
-    public function update(UpdateUserRequest $request, User $user): RedirectResponse
+    public function update(Request $request, Role $role): RedirectResponse
     {
         DB::beginTransaction();
 
-        if ($this->auth->can('user.update')) {
+        if ($this->auth->can('role.update')) {
             try {
-                $user->fill($request->safe(
-                    [
-                        'name',
-                        'email',
-                    ]
-                ));
+                $this->validate($request, [
+                    'name' => 'required',
+                ]);
 
-                if ($request->password) {
-                    $user->password = $request->password;
-                }
+                $role->name = $request->input('name');
+                $role->update();
 
-                $getRole = Role::find($request->role);
-                // $role = match ($getRole->id) {
-                //     1 => $user->role = "Admin",
-                //     2 => $user->role = "User",
-                // };
-
-                $user->update();
-
-                $user->syncRoles([$getRole->name]);
+                $role->syncPermissions($request->input('permission'));
 
                 $notification = array(
-                    'message'    => 'User data has been updated!',
+                    'message'    => 'Role data has been updated!',
                     'alert-type' => 'success'
                 );
             } catch (Exception $e) {
@@ -229,26 +213,25 @@ class UserController extends BaseController
     }
 
     /**
-     * Delete data.
+     * Remove the specified resource from storage.
      *
-     * @param User $user
+     * @param  Role $role
      * @return JsonResponse
      */
-    public function destroy(User $user): JsonResponse
+    public function destroy(Role $role): JsonResponse
     {
-        if ($this->auth->can('user.delete')) {
+        if ($this->auth->can('role.delete')) {
 
-            $validation = Gate::inspect('adminDelete', [$user, $user->id]);
+            $validation = Gate::inspect('roleDelete', $role);
 
             if ($validation->allowed()) {
-                $validation = User::destroy($user->id);
+                $validation = Role::destroy($role->id);
                 return response()->json(['success' => true, 'message' => 'User Data has been DELETED !']);
             } else {
                 $message = $validation->message();
 
                 return response()->json(['success' => false, 'message' => $message]);
             }
-        } else {
             return response()->json(['success' => false, 'message' => "You didn't have access for this action 😝 !!!"]);
         }
     }
