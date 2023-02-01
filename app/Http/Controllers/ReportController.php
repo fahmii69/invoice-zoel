@@ -42,14 +42,14 @@ class ReportController extends BaseController
         $this->startDate = $startDate;
         $this->endDate   = $endDate;
 
-        $this->saleDetail = SaleDetail::query()
-            ->select(DB::raw('SUM(quantity) as total_quantity'), 'product_id', 'sales_id')
-            ->with('sale', 'product')
-            ->whereHas('sale', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('sales_date', [$startDate, $endDate]);
-            })
-            ->groupBy('product_id')
-            ->get();
+        // $this->saleDetail = SaleDetail::query()
+        //     ->select(DB::raw('SUM(quantity) as total_quantity'), 'product_id', 'sales_id')
+        //     ->with('sale', 'product')
+        //     ->whereHas('sale', function ($q) use ($startDate, $endDate) {
+        //         $q->whereBetween('sales_date', [$startDate, $endDate]);
+        //     })
+        //     ->groupBy('product_id')
+        //     ->get();
 
         // dd($saleDetail);
 

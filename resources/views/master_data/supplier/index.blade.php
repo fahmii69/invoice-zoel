@@ -4,7 +4,7 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
-        @can('supplier.index')
+        @can('supplier.create')
         <x-create-button route="{{ route('supplier.create') }}" title=Supplier />
         @endcan
         <div class="card-body">

@@ -3,7 +3,7 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
-        @can('customer.index')
+        @can('customer.create')
         <x-create-button route="{{ route('customer.create') }}" title=Customer />
         @endcan
         <div class="card-body">

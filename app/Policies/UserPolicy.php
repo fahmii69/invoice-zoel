@@ -38,6 +38,10 @@ class UserPolicy
             return Response::deny("This Account Can't be deleted 😂");
         }
 
+        if ($id->id == 3) {
+            return Response::deny("This Account Can't be deleted 😂");
+        }
+
         return Response::allow();
     }
 }

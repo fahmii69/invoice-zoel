@@ -65,8 +65,8 @@ class SaleController extends BaseController
                 })
                 ->addColumn('action', function ($data) {
                     $route = route('sale.edit', $data->id);
-                    $canEdit = $this->auth->can('supplier.edit');
-                    $canDelete = $this->auth->can('supplier.delete');
+                    $canEdit = $this->auth->can('sale.edit');
+                    $canDelete = $this->auth->can('sale.delete');
 
                     return view('components.sale-action-button', compact('data', 'route', 'canEdit', 'canDelete'));
                 })

@@ -38,6 +38,10 @@ class RolePolicy
             return Response::deny("This Role Can't be deleted 😂");
         }
 
+        if ($role->id == 3) {
+            return Response::deny("This Role Can't be deleted 😂");
+        }
+
         return Response::allow();
     }
 }

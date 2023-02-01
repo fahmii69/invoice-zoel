@@ -27,6 +27,14 @@ class UserSeeder extends Seeder
                 'updated_at' => Carbon::now()->toDateTimeString(),
             ],
             [
+                'name'  => 'Supervisor',
+                'email' => 'spv@gmail.com',
+                'email_verified_at' => Carbon::now()->toDateTimeString(),
+                'password'   => Hash::make('spv'),
+                'created_at' => Carbon::now()->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
+            ],
+            [
                 'name'  => 'Staff',
                 'email' => 'staff@gmail.com',
                 'email_verified_at' => Carbon::now()->toDateTimeString(),
@@ -38,6 +46,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::where('name', 'Admin')->first()->syncRoles('Admin');
-        User::where('name', 'Staff')->first()->syncRoles('User');
+        User::where('name', 'Supervisor')->first()->syncRoles('Supervisor');
+        User::where('name', 'Staff')->first()->syncRoles('Staff');
     }
 }
