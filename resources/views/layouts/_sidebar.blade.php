@@ -106,18 +106,22 @@
                         <p>Report</p>
                     </a>
                 </li>
+                @can('role.index')
                 <li class="nav-item">
                     <a href="{{ route('role.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-user-cog"></i>
                         <p>Role</p>
                     </a>
                 </li>
+                @endcan
+                @can('user.index')
                 <li class="nav-item">
                     <a href="{{ route('user.index') }}" class="nav-link">
                         <i class="nav-icon fas fa-user"></i>
                         <p>User</p>
                     </a>
                 </li>
+                @endcan
 				{{-- /Master Data --}}
             </ul>
         </nav>

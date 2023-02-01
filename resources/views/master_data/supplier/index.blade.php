@@ -4,7 +4,9 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
+        @can('supplier.index')
         <x-create-button route="{{ route('supplier.create') }}" title=Supplier />
+        @endcan
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="supplier-dataTable" width="100%" cellspacing="0">

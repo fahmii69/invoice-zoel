@@ -3,7 +3,9 @@
 <!-- Default box -->
 <div class="container-fluid">
     <div class="card shadow mb-4">
+        @can('customer.index')
         <x-create-button route="{{ route('customer.create') }}" title=Customer />
+        @endcan
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="customer-dataTable" width="100%" cellspacing="0">

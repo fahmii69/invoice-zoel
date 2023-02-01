@@ -106,11 +106,6 @@ class UserController extends BaseController
                 ));
 
                 $getRole = Role::find($request->role);
-                // $role = match ($getRole->id) {
-                //     1 => $user->role = "Admin",
-                //     2 => $user->role = "User",
-                // };
-
 
                 $user->save();
 
@@ -192,14 +187,10 @@ class UserController extends BaseController
                 }
 
                 $getRole = Role::find($request->role);
-                // $role = match ($getRole->id) {
-                //     1 => $user->role = "Admin",
-                //     2 => $user->role = "User",
-                // };
-
-                $user->update();
 
                 $user->syncRoles([$getRole->name]);
+
+                $user->update();
 
                 $notification = array(
                     'message'    => 'User data has been updated!',
